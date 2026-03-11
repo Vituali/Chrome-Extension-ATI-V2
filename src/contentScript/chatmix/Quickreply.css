@@ -1,0 +1,104 @@
+/* =================================================================== */
+/* == QUICK REPLY — Respostas rápidas acima do textarea             == */
+/* =================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+#ati-quick-reply-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* --- Abas de categoria --- */
+.ati-qr-tabs {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ati-qr-tab {
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.ati-qr-tab:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.ati-qr-tab--active {
+  background: rgba(0, 100, 255, 0.2);
+  border-color: rgba(0, 100, 255, 0.4);
+  color: rgb(100, 160, 255);
+}
+
+/* --- Botões de resposta --- */
+.ati-qr-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.ati-qr-btn {
+  padding: 5px 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ati-qr-btn:hover {
+  background: rgba(0, 100, 255, 0.2);
+  border-color: rgba(0, 100, 255, 0.35);
+  color: white;
+}
+
+.ati-qr-btn:active {
+  transform: scale(0.97);
+}
+
+/* --- Loading / erro --- */
+.ati-qr-loading {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.25);
+  font-style: italic;
+  padding: 4px 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ati-qr-loading::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgb(0, 100, 255);
+  border-radius: 50%;
+  animation: ati-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}

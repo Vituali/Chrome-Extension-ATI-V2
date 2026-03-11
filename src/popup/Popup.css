@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 280px;
+  background: #111111;
+  color: #f0f0f0;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* --- Container --- */
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 14px;
+  min-height: 80px;
+}
+
+/* --- Header --- */
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.popup-logo {
+  width: 32px;
+  height: 32px;
+  background: rgb(0, 100, 255);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.popup-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Loading --- */
+.popup-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.popup-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: rgb(0, 100, 255);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* --- Não logado --- */
+.popup-not-logged {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.popup-lock {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.popup-not-logged p {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.popup-not-logged span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* --- Usuário logado --- */
+.popup-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.popup-avatar {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, rgb(0, 100, 255), rgb(0, 60, 200));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.popup-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.popup-user-info strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popup-user-info span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: 'Space Mono', monospace;
+}
+
+.popup-role {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.popup-role--admin {
+  background: rgba(255, 200, 0, 0.15);
+  color: #ffc800;
+  border: 1px solid rgba(255, 200, 0, 0.2);
+}
+
+.popup-role--usuario {
+  background: rgba(0, 100, 255, 0.15);
+  color: rgba(100, 160, 255, 1);
+  border: 1px solid rgba(0, 100, 255, 0.2);
+}
+
+/* --- Divider --- */
+.popup-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+/* --- Botões --- */
+.popup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.popup-btn {
+  width: 100%;
+  padding: 9px 14px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.popup-btn--site {
+  background: rgba(0, 100, 255, 0.15);
+  color: rgb(100, 160, 255);
+  border: 1px solid rgba(0, 100, 255, 0.25);
+}
+
+.popup-btn--site:hover {
+  background: rgba(0, 100, 255, 0.25);
+  border-color: rgba(0, 100, 255, 0.4);
+}
+
+.popup-btn--logout {
+  background: rgba(220, 53, 69, 0.1);
+  color: rgba(255, 100, 110, 0.9);
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.popup-btn--logout:hover {
+  background: rgba(220, 53, 69, 0.2);
+  border-color: rgba(220, 53, 69, 0.35);
+}
+
+.popup-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
