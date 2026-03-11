@@ -1,11 +1,10 @@
 import { defineManifest } from '@crxjs/vite-plugin'
 import packageData from '../package.json'
 
-//@ts-ignore
-const isDev = process.env.NODE_ENV == 'development'
 
 export default defineManifest({
-  name: `${packageData.displayName || packageData.name}${isDev ? ` ➡️ Dev` : ''}`,
+  key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnwdLTz9cq5SlmjeeScuFAqyWSvCiL/cTRcQ+u2kc9XYghhNwCDi1caRGtkQimEGrqN0d1XwKtexKrsgQhAjgyJT6FrP+yttdWPSuA+oIyB2UK8fYpEucPtYEAopNYNO5TcBostKkETqWvl/Dt45RIGn1OS2ogrXA/d+MSi5Oiyb7gAzEcXjEnentQT8gaRHHcC+opaXlpXAKDmdONNmG65+SdeVklZegp7CuQ2plJLFbXG79DZf8H/OVgSr1m6kbEqkqG1GetdRn4rmsJk8vZLPE8KnrHiCoro5WNuOXCud70dPDyJ7V9diw2fTK6l6aAmjhg8if3JIIgnItpMCy4QIDAQAB',
+  name: packageData.displayName || packageData.name,
   description: packageData.description,
   version: packageData.version,
   manifest_version: 3,
@@ -43,4 +42,9 @@ export default defineManifest({
     },
   ],
   permissions: ['sidePanel', 'storage', 'tabs', 'alarms'],
+  host_permissions: [
+    '*://*.chatmix.com.br/*',
+    '*://sgp.atiinternet.com.br/*',
+    'http://201.158.20.35:8000/*',
+  ],
 })

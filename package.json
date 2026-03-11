@@ -1,16 +1,17 @@
 {
-  "name": "extens-o",
-  "displayName": "Extensão",
-  "version": "0.0.0",
+  "name": "ati-auxiliar-de-atendimentos",
+  "displayName": "ATI - Auxiliar de Atendimentos",
+  "version": "2.0.0",
   "author": "Vituali",
-  "description": "",
+  "description": "Extensão para auxiliar atendentes do suporte ATI Internet no ChatMix",
   "type": "module",
   "license": "MIT",
   "keywords": [
     "chrome-extension",
-    "react",
-    "vite",
-    "create-chrome-ext"
+    "atendimento",
+    "chatmix",
+    "sgp",
+    "ati"
   ],
   "engines": {
     "node": ">=14.18.0"
