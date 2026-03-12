@@ -46,7 +46,9 @@ export async function getClientData(): Promise<ClientData> {
   // Verifica se o cliente está identificado
   const hasName = fullName && fullName.toUpperCase() !== 'CLIENTE'
   const headers = Array.from(document.querySelectorAll('h1'))
-  const isUnidentifiedPage = headers.some((h) => h.textContent?.includes('Cliente não identificado'))
+  const isUnidentifiedPage = headers.some((h) =>
+    h.textContent?.includes('Cliente não identificado'),
+  )
   const isIdentified = !!hasName && !isUnidentifiedPage
 
   const data: ClientData = {

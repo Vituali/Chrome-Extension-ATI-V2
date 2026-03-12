@@ -26,7 +26,9 @@ export async function smartOpenSGP(clientData: ClientData): Promise<void> {
   try {
     const response = await Promise.race([
       chrome.runtime.sendMessage({ action: 'openInSgp', clientData, cachedContract }),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout: background não respondeu em 5s')), 5000))
+      new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout: background não respondeu em 5s')), 5000),
+      ),
     ])
 
     if (!(response as any)?.success) {

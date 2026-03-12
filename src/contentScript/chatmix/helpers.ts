@@ -116,10 +116,14 @@ export function formatPhoneNumber(phone: string): string {
 }
 
 // --- Seta valor em input controlado pelo Vue/React ---
-export function setNativeValue(element: HTMLInputElement | HTMLTextAreaElement, value: string): void {
-  const prototype = element instanceof HTMLTextAreaElement
-    ? window.HTMLTextAreaElement.prototype
-    : window.HTMLInputElement.prototype
+export function setNativeValue(
+  element: HTMLInputElement | HTMLTextAreaElement,
+  value: string,
+): void {
+  const prototype =
+    element instanceof HTMLTextAreaElement
+      ? window.HTMLTextAreaElement.prototype
+      : window.HTMLInputElement.prototype
 
   const nativeInputValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value')?.set
 

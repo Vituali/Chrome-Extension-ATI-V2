@@ -5,5 +5,5 @@ import Popup from './Popup'
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Popup />
-  </StrictMode>
+  </StrictMode>,
 )

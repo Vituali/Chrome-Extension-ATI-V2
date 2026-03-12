@@ -1,7 +1,7 @@
 @import './Quickreply.css';
 :root {
-    --chatPrimary: rgb(0, 100, 255);
-    --chatHover: rgb(0, 60, 255);
+  --chatPrimary: rgb(0, 100, 255);
+  --chatHover: rgb(0, 60, 255);
 }
 
 /* =================================================================== */
@@ -10,63 +10,63 @@
 
 /* --- Container principal dos botões --- */
 #actionsContainerV2 {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 6px; 
-    padding: 8px; 
-    background: transparent; 
-    width: 100%; 
-    box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 6px;
+  padding: 8px;
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* --- Estilo base de todos os botões --- */
 .action-btn {
-    padding: 14px 0;
-    font-size: 15px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: linear-gradient(145deg, rgba(0,100,255,0.9), rgba(0,60,255,0.9));
-    backdrop-filter: blur(6px);
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    transition: all .18s ease;
+  padding: 14px 0;
+  font-size: 15px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(145deg, rgba(0, 100, 255, 0.9), rgba(0, 60, 255, 0.9));
+  backdrop-filter: blur(6px);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.18s ease;
 }
 
 /* --- Hover: escurece e sobe levemente --- */
 .action-btn:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow:0 8px 18px rgba(0,60,255,0.45), inset 0 0 0 1px rgba(255,255,255,0.05);
-
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 8px 18px rgba(0, 60, 255, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .action-btn i,
 .action-btn span.icon {
+  width: 22px;
+  height: 22px;
 
-    width: 22px;
-    height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
 
-    background: rgba(255,255,255,0.12);
-    border-radius: 6px;
-
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .action-btn:active {
-    transform: scale(.95);
+  transform: scale(0.95);
 }
 
 /* --- Estado desabilitado (durante carregamento) --- */
 .action-btn:disabled {
-    cursor: not-allowed;
-    opacity: 1;
+  cursor: not-allowed;
+  opacity: 1;
 }
 
 /* =================================================================== */
@@ -75,14 +75,14 @@
 
 /* --- Sucesso: verde com brilho --- */
 .action-btn--success {
-    background-color: #28a745 !important;
-    box-shadow: 0 0 15px #28a745 !important;
+  background-color: #28a745 !important;
+  box-shadow: 0 0 15px #28a745 !important;
 }
 
 /* --- Erro: vermelho com brilho --- */
 .action-btn--error {
-    background-color: #dc3545 !important;
-    box-shadow: 0 0 15px #dc3545 !important;
+  background-color: #dc3545 !important;
+  box-shadow: 0 0 15px #dc3545 !important;
 }
 
 /* =================================================================== */
@@ -91,18 +91,20 @@
 
 /* --- Bolinha girando que aparece ao clicar --- */
 .spinner {
-    width: 12px;
-    height: 12px;
-    border: 3px solid white;
-    border-top-color: transparent; /* cria o efeito de arco incompleto */
-    border-radius: 50%;
-    display: inline-block;
-    animation: spin 0.6s linear infinite;
+  width: 12px;
+  height: 12px;
+  border: 3px solid white;
+  border-top-color: transparent; /* cria o efeito de arco incompleto */
+  border-radius: 50%;
+  display: inline-block;
+  animation: spin 0.6s linear infinite;
 }
 
 /* --- Animação de rotação --- */
 @keyframes spin {
-    to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* =================================================================== */
@@ -113,12 +115,12 @@
 
 /* Header do topo */
 html.dark header.dark\:bg-neutral-700 {
-    background-color: rgb(35, 35, 35) !important;
+  background-color: rgb(35, 35, 35) !important;
 }
 
 /* Sidebar (lista de conversas) */
 html.dark .chat_sidebar[data-v-2022d195] {
-    background-color: rgb(25, 25, 25) !important;
+  background-color: rgb(25, 25, 25) !important;
 }
 
 /* Remove fundos desnecessários dentro do header da sidebar */
@@ -126,71 +128,71 @@ html.dark .chat_sidebar header .dark\:bg-neutral-700,
 html.dark .chat_sidebar header .dark\:bg-neutral-600,
 .bg-amber-100,
 .bg-slate-100 {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
 
 /* Elementos secundários */
 html.dark .dark\:bg-neutral-500 {
-    background-color: rgb(45, 45, 45) !important;
+  background-color: rgb(45, 45, 45) !important;
 }
 
 /* Borda do campo de busca */
 html.dark .chat_sidebar input.dark\:border-gray-600 {
-    border-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 /* Elementos brancos viram cinza escuro */
 html.dark .bg-white {
-    background-color: rgb(40, 40, 40) !important;
+  background-color: rgb(40, 40, 40) !important;
 }
 
 /* ---- Cores do tema e mensagens ---- */
 
 /* Cor primária do chat (azul translúcido) */
 html.dark body {
-    --chatPrimary: rgba(0, 110, 255, 0.377) !important;
+  --chatPrimary: rgba(0, 110, 255, 0.377) !important;
 }
 
 /* Elementos com cor primária do chat */
 html.dark .bg-chat-primary {
-    background-color: var(--chatPrimary) !important;
+  background-color: var(--chatPrimary) !important;
 }
 
 /* Balões de mensagem recebida */
 html.dark .message_received:is(.dark *) {
-    background-color: rgba(50, 50, 50, 0.5) !important;
+  background-color: rgba(50, 50, 50, 0.5) !important;
 }
 
 /* Elementos neutros */
 html.dark .bg-neutral-400 {
-    background-color: rgba(179, 179, 179, 0.377) !important;
+  background-color: rgba(179, 179, 179, 0.377) !important;
 }
 
 /* ---- Itens da lista de atendimentos ---- */
 
 /* Suaviza a troca de cor ao passar o mouse */
 html.dark .attendance_item {
-    transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out;
 }
 
 /* Fundo padrão de cada conversa na lista */
 .attendance_item[data-v-14ec4674]:is(.dark *) {
-    background-color: rgb(60, 60, 60) !important;
+  background-color: rgb(60, 60, 60) !important;
 }
 
 /* Hover em conversa não selecionada */
 html.dark .attendance_item:not(.active):hover {
-    background-color: rgba(0, 120, 215, 0.25) !important;
+  background-color: rgba(0, 120, 215, 0.25) !important;
 }
 
 /* Conversa atualmente selecionada */
 html.dark .attendance_item.active {
-    background-color: var(--chatPrimary) !important;
+  background-color: var(--chatPrimary) !important;
 }
 
 /* Conversa com mensagem nova (não selecionada) */
 html.dark .attendance_item.newMessage:not(.active) {
-    background-color: rgba(0, 120, 215, 0.4) !important;
+  background-color: rgba(0, 120, 215, 0.4) !important;
 }
 
 /* ---- Divisórias e bordas ---- */
@@ -198,64 +200,118 @@ html.dark .attendance_item.newMessage:not(.active) {
 /* Borda direita do header e sidebar */
 html.dark header.dark\:bg-neutral-700,
 html.dark .chat_sidebar[data-v-2022d195] {
-    border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Borda superior de elementos internos */
 html.dark .dark\:bg-neutral-800\/50 {
-    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Borda inferior do header do chat */
 html.dark .chat_content .dark\:bg-neutral-500 {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 /* ---- Correções de bugs e melhorias ---- */
 
-/* Scrollbar visível no dark mode */
-html.dark * {
-    scrollbar-width: auto !important;
+/* Scrollbar visível e elegante no dark mode (Otimizado para Performance) */
+html.dark .chat_sidebar section,
+html.dark .chat_content,
+html.dark .ati-os-modal-body,
+html.dark #attendanceMessages,
+html.dark .h-full,
+html.dark textarea,
+html.dark ul.overflow-scroll {
+  scrollbar-width: thin !important; /* Deixa fininha no Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent !important;
+}
+
+/* Customização para Chrome, Edge e Safari (Barra vertical e horizontal fininhas) */
+html.dark #attendanceMessages::-webkit-scrollbar,
+html.dark .chat_sidebar section::-webkit-scrollbar,
+html.dark .chat_content::-webkit-scrollbar,
+html.dark .ati-os-modal-body::-webkit-scrollbar,
+html.dark .h-full::-webkit-scrollbar,
+html.dark textarea::-webkit-scrollbar,
+html.dark ul.overflow-scroll::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important; /* Controla a grossura da barra horizontal! */
+}
+
+html.dark #attendanceMessages::-webkit-scrollbar-track,
+html.dark .chat_sidebar section::-webkit-scrollbar-track,
+html.dark .chat_content::-webkit-scrollbar-track,
+html.dark .ati-os-modal-body::-webkit-scrollbar-track,
+html.dark .h-full::-webkit-scrollbar-track,
+html.dark textarea::-webkit-scrollbar-track,
+html.dark ul.overflow-scroll::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+html.dark #attendanceMessages::-webkit-scrollbar-thumb,
+html.dark .chat_sidebar section::-webkit-scrollbar-thumb,
+html.dark .chat_content::-webkit-scrollbar-thumb,
+html.dark .ati-os-modal-body::-webkit-scrollbar-thumb,
+html.dark .h-full::-webkit-scrollbar-thumb,
+html.dark textarea::-webkit-scrollbar-thumb,
+html.dark ul.overflow-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 10px !important;
+}
+
+html.dark #attendanceMessages::-webkit-scrollbar-thumb:hover,
+html.dark .chat_sidebar section::-webkit-scrollbar-thumb:hover,
+html.dark .chat_content::-webkit-scrollbar-thumb:hover,
+html.dark .ati-os-modal-body::-webkit-scrollbar-thumb:hover,
+html.dark .h-full::-webkit-scrollbar-thumb:hover,
+html.dark textarea::-webkit-scrollbar-thumb:hover,
+html.dark ul.overflow-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3) !important;
 }
 
 /* Evita scroll horizontal indesejado */
-html, body {
-    overflow-x: hidden !important;
+html,
+body {
+  overflow-x: hidden !important;
 }
 
 /* Esconde painel lateral quando está com largura 0 */
-.chat_content + .h-screen[style*="width: 0px"] {
-    display: none !important;
-    visibility: hidden !important;
+.chat_content + .h-screen[style*='width: 0px'] {
+  display: none !important;
+  visibility: hidden !important;
 }
 
 /* Fundo escuro da área de chat (via pseudo-elemento para não afetar filhos) */
 html.dark .chat_content[data-v-6cea75da] {
-    position: relative;
-    z-index: 0;
+  position: relative;
+  z-index: 0;
 }
 html.dark .chat_content[data-v-6cea75da]::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgb(20, 20, 20);
-    z-index: -1;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(20, 20, 20);
+  z-index: -1;
 }
 
 /* Sidebar ocupa altura total da tela com scroll interno */
 html.dark .chat_sidebar[data-v-2022d195] {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 /* Lista de conversas cresce para preencher o espaço disponível */
 html.dark .chat_sidebar[data-v-2022d195] > section {
-    flex-grow: 1;
-    min-height: 0; /* necessário para o overflow funcionar dentro do flex */
+  flex-grow: 1;
+  min-height: 0; /* necessário para o overflow funcionar dentro do flex */
 }
 
 /* Remove borda esquerda desnecessária nas mensagens */
 html.dark .chat_content .dark\:bg-neutral-500 .border-l-2 {
-    border-left-color: transparent !important;
+  border-left-color: transparent !important;
 }

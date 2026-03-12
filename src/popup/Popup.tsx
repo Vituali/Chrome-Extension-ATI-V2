@@ -69,9 +69,7 @@ export const Popup = () => {
       </div>
 
       <div className="popup-user">
-        <div className="popup-avatar">
-          {session.nomeCompleto.charAt(0).toUpperCase()}
-        </div>
+        <div className="popup-avatar">{session.nomeCompleto.charAt(0).toUpperCase()}</div>
         <div className="popup-user-info">
           <strong>{session.nomeCompleto}</strong>
           <span>@{session.username}</span>

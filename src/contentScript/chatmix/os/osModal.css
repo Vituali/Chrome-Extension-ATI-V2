@@ -165,7 +165,9 @@
   background: rgba(255, 255, 255, 0.06);
   color: #f0f0f0;
   border: 1px solid rgba(255, 255, 255, 0.12);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   outline: none;
 }
 
@@ -252,7 +254,9 @@ input.modal-textarea {
   background: rgba(255, 255, 255, 0.6);
   top: 3px;
   left: 3px;
-  transition: transform 0.25s ease, background-color 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    background-color 0.25s ease;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
@@ -289,7 +293,9 @@ input.modal-textarea {
 }
 
 @keyframes ati-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* --- Seletor com busca --- */

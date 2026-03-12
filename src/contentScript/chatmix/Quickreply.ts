@@ -113,7 +113,9 @@ export function injectQuickReply(replies: QuickReply[]): void {
   showCategories()
   insertContainer()
 
-  log(`Quick reply injetado — ${quickReplies.length} respostas em ${categories.length} categoria(s).`)
+  log(
+    `Quick reply injetado — ${quickReplies.length} respostas em ${categories.length} categoria(s).`,
+  )
 }
 
 // =================================================================
@@ -123,7 +125,7 @@ export function injectQuickReply(replies: QuickReply[]): void {
 function renderButtons(
   container: HTMLDivElement,
   replies: QuickReply[],
-  textarea: HTMLTextAreaElement
+  textarea: HTMLTextAreaElement,
 ): void {
   container.innerHTML = ''
 

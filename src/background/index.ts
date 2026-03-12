@@ -126,7 +126,7 @@ async function handleFirebaseLogin(email: string, password: string) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, returnSecureToken: true }),
         signal: AbortSignal.timeout(8000),
-      }
+      },
     )
 
     console.log('Extensão ATI: Auth response status:', authResponse.status)
@@ -135,11 +135,11 @@ async function handleFirebaseLogin(email: string, password: string) {
 
     if (!authResponse.ok) {
       const errorMessages: Record<string, string> = {
-        'EMAIL_NOT_FOUND': 'Email não encontrado.',
-        'INVALID_PASSWORD': 'Senha incorreta.',
-        'INVALID_LOGIN_CREDENTIALS': 'Email ou senha incorretos.',
-        'TOO_MANY_ATTEMPTS_TRY_LATER': 'Muitas tentativas. Tente mais tarde.',
-        'USER_DISABLED': 'Seu acesso está bloqueado. Fale com o administrador.',
+        EMAIL_NOT_FOUND: 'Email não encontrado.',
+        INVALID_PASSWORD: 'Senha incorreta.',
+        INVALID_LOGIN_CREDENTIALS: 'Email ou senha incorretos.',
+        TOO_MANY_ATTEMPTS_TRY_LATER: 'Muitas tentativas. Tente mais tarde.',
+        USER_DISABLED: 'Seu acesso está bloqueado. Fale com o administrador.',
       }
       const code = authData?.error?.message ?? ''
       return { success: false, error: errorMessages[code] ?? 'Erro ao fazer login.' }
@@ -148,9 +148,7 @@ async function handleFirebaseLogin(email: string, password: string) {
     const uid = authData.localId
     const idToken = authData.idToken
 
-    const dbResponse = await fetch(
-      `${firebaseConfig.databaseURL}atendentes.json?auth=${idToken}`
-    )
+    const dbResponse = await fetch(`${firebaseConfig.databaseURL}atendentes.json?auth=${idToken}`)
     const atendentes = await dbResponse.json()
 
     if (!atendentes) {
@@ -197,7 +195,9 @@ async function handleFirebaseLogin(email: string, password: string) {
 // SGP — AUTENTICAÇÃO
 // =================================================================
 
-async function performLoginCheck(baseUrl: string): Promise<{ isLoggedIn: boolean; baseUrl: string }> {
+async function performLoginCheck(
+  baseUrl: string,
+): Promise<{ isLoggedIn: boolean; baseUrl: string }> {
   try {
     const response = await fetch(`${baseUrl}/admin/`, {
       credentials: 'include',
@@ -275,7 +275,10 @@ async function executeSearch(url: string): Promise<SgpClient[] | null> {
   }
 }
 
-async function findClientInSgp(baseUrl: string, clientData: ClientData): Promise<SgpClient[] | null> {
+async function findClientInSgp(
+  baseUrl: string,
+  clientData: ClientData,
+): Promise<SgpClient[] | null> {
   const { cpfCnpj, fullName, phoneNumber } = clientData
   const base = `${baseUrl}/public/autocomplete/ClienteAutocomplete`
 
@@ -287,7 +290,9 @@ async function findClientInSgp(baseUrl: string, clientData: ClientData): Promise
 
   if (fullName && fullName !== 'Cliente') {
     console.log('Extensão ATI: Buscando por nome...')
-    const result = await executeSearch(`${base}?tconsulta=nome&term=${encodeURIComponent(fullName)}`)
+    const result = await executeSearch(
+      `${base}?tconsulta=nome&term=${encodeURIComponent(fullName)}`,
+    )
     if (result) return result
   }
 
@@ -327,7 +332,10 @@ async function focusOrOpenTab(url: string, clientId?: string): Promise<void> {
 // SGP — HANDLER PRINCIPAL
 // =================================================================
 
-async function handleOpenInSgp(clientData: ClientData, cachedContract: string | null): Promise<void> {
+async function handleOpenInSgp(
+  clientData: ClientData,
+  cachedContract: string | null,
+): Promise<void> {
   if (cachedContract) {
     console.log(`Extensão ATI: Usando contrato cacheado — ${cachedContract}`)
     const url = `${SGP_DNS}/admin/clientecontrato/${cachedContract}/change/`
@@ -419,7 +427,10 @@ async function getSgpFormParams(clientData: ClientData): Promise<any> {
         throw new Error('Sua sessão no SGP expirou. Faça o login novamente.')
       }
 
-      const initialContracts = extractOptions(html, /<select[^>]+id=['"]id_clientecontrato['"][^>]*>([\s\S]*?)<\/select>/)
+      const initialContracts = extractOptions(
+        html,
+        /<select[^>]+id=['"]id_clientecontrato['"][^>]*>([\s\S]*?)<\/select>/,
+      )
 
       const mappedContracts = initialContracts.map((c) => ({
         ...c,
@@ -433,13 +444,13 @@ async function getSgpFormParams(clientData: ClientData): Promise<any> {
           try {
             const servRes = await fetch(
               `${baseUrl}/admin/clientecontrato/servico/list/ajax/?contrato_id=${contract.id}`,
-              { credentials: 'include' }
+              { credentials: 'include' },
             )
             const services = await servRes.json()
             if (services?.length > 0 && services[0].id) {
               const detailRes = await fetch(
                 `${baseUrl}/admin/atendimento/ocorrencia/servico/detalhe/ajax/?servico_id=${services[0].id}&contrato_id=${contract.id}`,
-                { credentials: 'include' }
+                { credentials: 'include' },
               )
               const details = await detailRes.json()
               if (details?.length > 0 && details[0]?.end_instalacao) {
@@ -450,16 +461,21 @@ async function getSgpFormParams(clientData: ClientData): Promise<any> {
             console.warn(`Extensão ATI: Sem endereço para contrato ${contract.id}.`)
           }
           return contract
-        })
+        }),
       )
 
       allContracts = allContracts.concat(contractsWithAddress)
 
       // Captura tipos e responsáveis só do primeiro cliente
       if (i === 0) {
-        responsibleUsers = extractOptions(html, /<select[^>]+id=['"]id_responsavel['"][^>]*>([\s\S]*?)<\/select>/)
-          .map((u) => ({ id: u.id, username: u.text.toLowerCase() }))
-        occurrenceTypes = extractOptions(html, /<select[^>]+id=['"]id_tipo['"][^>]*>([\s\S]*?)<\/select>/)
+        responsibleUsers = extractOptions(
+          html,
+          /<select[^>]+id=['"]id_responsavel['"][^>]*>([\s\S]*?)<\/select>/,
+        ).map((u) => ({ id: u.id, username: u.text.toLowerCase() }))
+        occurrenceTypes = extractOptions(
+          html,
+          /<select[^>]+id=['"]id_tipo['"][^>]*>([\s\S]*?)<\/select>/,
+        )
       }
     } catch (error) {
       console.error(`Extensão ATI: Falha ao buscar dados para cliente ${client.id}.`, error)
@@ -486,7 +502,7 @@ async function getSgpFormParams(clientData: ClientData): Promise<any> {
     sgpFormCache.set(key, value)
   }
   setSgpFormCache(cacheKey, result)
-  return result 
+  return result
 }
 
 // =================================================================
@@ -509,7 +525,7 @@ async function createOccurrenceVisually(data: any): Promise<void> {
 async function getOsTemplates(username: string, idToken: string): Promise<any[]> {
   try {
     const res = await fetch(
-      `${firebaseConfig.databaseURL}modelos_os/${username}.json?auth=${idToken}`
+      `${firebaseConfig.databaseURL}modelos_os/${username}.json?auth=${idToken}`,
     )
     const data = await res.json()
     const templates = data ? Object.values(data) : []
@@ -535,9 +551,7 @@ async function getQuickReplies(username: string): Promise<any[]> {
     const userData = await userRes.json()
     const masterData = masterRes.ok ? await masterRes.json() : null
 
-    const userReplies = Array.isArray(userData)
-      ? userData
-      : Object.values(userData ?? {})
+    const userReplies = Array.isArray(userData) ? userData : Object.values(userData ?? {})
 
     const masterReplies = masterData
       ? Array.isArray(masterData)
@@ -545,8 +559,8 @@ async function getQuickReplies(username: string): Promise<any[]> {
         : Object.values(masterData)
       : []
 
-    const all = [...masterReplies, ...userReplies].filter(    
-      (r: any) => r?.category === 'quick_reply' && r?.text && r?.title
+    const all = [...masterReplies, ...userReplies].filter(
+      (r: any) => r?.category === 'quick_reply' && r?.text && r?.title,
     )
 
     console.log(`Extensão ATI: ${all.length} quick replies carregados para ${username}`)

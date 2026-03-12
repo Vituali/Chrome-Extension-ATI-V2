@@ -27,11 +27,14 @@ if (isOccurrencePage) {
 
     // Quando carregar, envia os dados via postMessage
     script.onload = () => {
-      window.postMessage({
-        type: 'ATI_SGP_FILL',
-        data,
-        username,
-      }, '*')
+      window.postMessage(
+        {
+          type: 'ATI_SGP_FILL',
+          data,
+          username,
+        },
+        '*',
+      )
       script.remove()
     }
 

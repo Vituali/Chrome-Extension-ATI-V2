@@ -8,7 +8,7 @@ export interface UserSession {
   nomeCompleto: string
   role: 'admin' | 'usuario'
   email: string
-  idToken: string  // ← adiciona isso
+  idToken: string // ← adiciona isso
 }
 
 const SESSION_KEY = 'ati_user_session'

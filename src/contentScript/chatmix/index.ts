@@ -11,7 +11,14 @@ import { getSession, UserSession } from './auth/session'
 import { showOSModal } from './os/osModal'
 import { collectTextFromMessages } from './helpers'
 import { injectLoginBanner } from './auth/loginModal'
-import { injectQuickReply, injectQuickReplyLoading, removeQuickReply, getCachedReplies, setCachedReplies, clearQuickReplyCache } from './Quickreply'
+import {
+  injectQuickReply,
+  injectQuickReplyLoading,
+  removeQuickReply,
+  getCachedReplies,
+  setCachedReplies,
+  clearQuickReplyCache,
+} from './Quickreply'
 import { clearDraft } from './os/osDraft'
 // Sessão atual em memória
 let currentSession: UserSession | null = null
@@ -94,8 +101,10 @@ const actions: Record<string, () => Promise<void>> = {
 
   'ati-open-os': async () => {
     const data = await getClientData()
-    log(`OS check — isIdentified: ${data.isIdentified}, phone: ${data.phoneNumber}, cpf: ${data.cpfCnpj}`)
-    
+    log(
+      `OS check — isIdentified: ${data.isIdentified}, phone: ${data.phoneNumber}, cpf: ${data.cpfCnpj}`,
+    )
+
     if (!data.isIdentified && !data.phoneNumber && !data.cpfCnpj) {
       throw new Error('Sem dados do cliente para abrir O.S.')
     }
@@ -281,29 +290,37 @@ function watchEncerrarAtendimento(): void {
 }
 
 // =================================================================
-// OBSERVER
+// OBSERVER OTIMIZADO (COM DEBOUNCE)
 // =================================================================
 
+let observerTimeout: ReturnType<typeof setTimeout> | null = null
+
 const observer = new MutationObserver(() => {
-  const sidebar = document.querySelector(SELECTORS.sidebar)
-  const hasButtons = document.getElementById('actionsContainerV2')
-  const hasBanner = document.getElementById('ati-login-banner')
-  const hasQuickReply = document.getElementById('ati-quick-reply-container')
-  const hasTextarea = document.querySelector(SELECTORS.textarea)
+  // Se o Vue continuar disparando mutações na tela, cancelamos a verificação
+  if (observerTimeout) clearTimeout(observerTimeout)
 
-  checkSessionChange()
+  // Espera 150ms de "silêncio" no DOM para agir.
+  // Isso impede que a extensão brigue com o vue-virtual-scroller.
+  observerTimeout = setTimeout(() => {
+    const sidebar = document.querySelector(SELECTORS.sidebar)
+    const hasButtons = document.getElementById('actionsContainerV2')
+    const hasBanner = document.getElementById('ati-login-banner')
+    const hasQuickReply = document.getElementById('ati-quick-reply-container')
+    const hasTextarea = document.querySelector(SELECTORS.textarea)
 
-  if (sidebar && !hasButtons && !hasBanner) {
-    log('Sidebar sem conteúdo, reinjetando...')
-    init()
-    return
-  }
+    checkSessionChange()
 
-  // Reinjetar quick reply se textarea existe mas container sumiu
-  if (hasTextarea && !hasQuickReply && currentSession) {
-    log('Quick reply sumiu, reinjetando...')
-    loadQuickReplies(currentSession)
-  }
+    if (sidebar && !hasButtons && !hasBanner) {
+      log('Sidebar sem conteúdo, reinjetando...')
+      init()
+      return
+    }
+
+    if (hasTextarea && !hasQuickReply && currentSession) {
+      log('Quick reply sumiu, reinjetando...')
+      loadQuickReplies(currentSession)
+    }
+  }, 150) // 150 milissegundos é o tempo mágico
 })
 
 observer.observe(document.body, { childList: true, subtree: true })

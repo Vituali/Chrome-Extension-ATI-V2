@@ -80,14 +80,11 @@ export function processDynamicPlaceholders(text: string): string {
 // SUGESTÃO DE TEMPLATE
 // =================================================================
 
-function findSuggestedTemplate(
-  chatTexts: string[],
-  templates: OsTemplate[]
-): OsTemplate | null {
+function findSuggestedTemplate(chatTexts: string[], templates: OsTemplate[]): OsTemplate | null {
   const chatContent = chatTexts.join(' ').toLowerCase()
   return (
     templates.find(
-      (t) => t.keywords && t.keywords.some((kw) => chatContent.includes(kw.toLowerCase()))
+      (t) => t.keywords && t.keywords.some((kw) => chatContent.includes(kw.toLowerCase())),
     ) ?? null
   )
 }
@@ -116,7 +113,7 @@ function populateContracts(container: Element | null, contracts: SgpContract[]):
         <input type="radio" name="selected_contract" value="${contract.id}" ${index === 0 ? 'checked' : ''}>
         <span>${contract.text}</span>
       </label>
-    `
+    `,
     )
     .join('')
 
@@ -132,7 +129,7 @@ function populateContracts(container: Element | null, contracts: SgpContract[]):
 
 function populateOccurrenceTypes(
   container: Element | null,
-  occurrenceTypes: { id: string; text: string }[]
+  occurrenceTypes: { id: string; text: string }[],
 ): void {
   if (!container) return
 
@@ -161,7 +158,7 @@ function populateOccurrenceTypes(
   const hiddenInput = container.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')!
   const optionsContainer = container.querySelector<HTMLDivElement>('#occurrenceTypeOptions')!
   const allOptions = Array.from(
-    optionsContainer.querySelectorAll<HTMLDivElement>('.searchable-option')
+    optionsContainer.querySelectorAll<HTMLDivElement>('.searchable-option'),
   )
 
   if (valid.length > 0) {
@@ -221,7 +218,7 @@ function createModal(config: ModalConfig): Promise<ModalResult> {
     const buttonsHTML = config.footerButtons
       .map(
         (btn) =>
-          `<button class="main-btn ${btn.className}" value="${btn.value}" ${btn.disabled ? 'disabled' : ''}>${btn.text}</button>`
+          `<button class="main-btn ${btn.className}" value="${btn.value}" ${btn.disabled ? 'disabled' : ''}>${btn.text}</button>`,
       )
       .join('')
 
@@ -256,10 +253,10 @@ function createModal(config: ModalConfig): Promise<ModalResult> {
 
       const osTextArea = modal.querySelector<HTMLTextAreaElement>('#osTextArea')
       const selectedContractInput = modal.querySelector<HTMLInputElement>(
-        'input[name="selected_contract"]:checked'
+        'input[name="selected_contract"]:checked',
       )
       const occurrenceTypeInput = modal.querySelector<HTMLInputElement>(
-        '#occurrenceTypeSelectedValue'
+        '#occurrenceTypeSelectedValue',
       )
       const statusCheckbox = modal.querySelector<HTMLInputElement>('#occurrenceStatusCheckbox')
       const createOSCheckbox = modal.querySelector<HTMLInputElement>('#shouldCreateOSCheckbox')
@@ -285,7 +282,7 @@ function createModal(config: ModalConfig): Promise<ModalResult> {
 export async function showOSModal(
   allTemplates: OsTemplate[],
   extractChatFn: () => string[],
-  clientData: ClientData
+  clientData: ClientData,
 ): Promise<void> {
   const { firstName, phoneNumber, cpfCnpj, fullName } = clientData
   const formattedPhone = phoneNumber ? formatPhoneNumber(phoneNumber) : ''
@@ -307,7 +304,7 @@ export async function showOSModal(
       ;(acc[cat] = acc[cat] ?? []).push(t)
       return acc
     },
-    {}
+    {},
   )
 
   let templatesHTML = ''
@@ -315,8 +312,11 @@ export async function showOSModal(
     templatesHTML +=
       `<h4 class="modal-category-title">${cat}</h4><div class="modal-btn-group">` +
       temps
-        .filter((t) => t.text && t.title)  // ← filtra incompletos
-        .map((t) => `<button class="template-btn" data-template-text="${t.text.replace(/"/g, '&quot;')}" data-occurrence-type-id="${t.occurrenceTypeId ?? ''}">${t.title}</button>`)
+        .filter((t) => t.text && t.title) // ← filtra incompletos
+        .map(
+          (t) =>
+            `<button class="template-btn" data-template-text="${t.text.replace(/"/g, '&quot;')}" data-occurrence-type-id="${t.occurrenceTypeId ?? ''}">${t.title}</button>`,
+        )
         .join('') +
       `</div>`
   }
@@ -375,7 +375,9 @@ export async function showOSModal(
     const osTextArea = modalElement.querySelector<HTMLTextAreaElement>('#osTextArea')!
     const sgpButton = modalElement.querySelector<HTMLButtonElement>('button[value="fill_sgp"]')!
     const osCheckbox = modalElement.querySelector<HTMLInputElement>('#shouldCreateOSCheckbox')!
-    const statusCheckbox = modalElement.querySelector<HTMLInputElement>('#occurrenceStatusCheckbox')!
+    const statusCheckbox = modalElement.querySelector<HTMLInputElement>(
+      '#occurrenceStatusCheckbox',
+    )!
     const statusLabel = modalElement.querySelector<HTMLElement>('#lblOccurrenceStatus')!
 
     // Texto inicial — restaura draft ou usa base
@@ -390,10 +392,20 @@ export async function showOSModal(
       if (chatId) {
         saveDraft(chatId, {
           osText: osTextArea.value,
-          selectedContract: modalElement.querySelector<HTMLInputElement>('input[name="selected_contract"]:checked')?.value ?? null,
-          selectedContractText: modalElement.querySelector<HTMLInputElement>('input[name="selected_contract"]:checked')?.closest('label')?.querySelector('span')?.textContent ?? null,
-          occurrenceType: modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')?.value ?? null,
-          occurrenceTypeText: modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSearchInput')?.value ?? null,
+          selectedContract:
+            modalElement.querySelector<HTMLInputElement>('input[name="selected_contract"]:checked')
+              ?.value ?? null,
+          selectedContractText:
+            modalElement
+              .querySelector<HTMLInputElement>('input[name="selected_contract"]:checked')
+              ?.closest('label')
+              ?.querySelector('span')?.textContent ?? null,
+          occurrenceType:
+            modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')?.value ??
+            null,
+          occurrenceTypeText:
+            modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSearchInput')?.value ??
+            null,
           sgpData: sgpData,
         })
       }
@@ -421,10 +433,12 @@ export async function showOSModal(
 
         // Seleciona tipo de ocorrência automaticamente
         const typeId = btn.getAttribute('data-occurrence-type-id')
-        const searchInput =
-          modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSearchInput')
-        const hiddenInput =
-          modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')
+        const searchInput = modalElement.querySelector<HTMLInputElement>(
+          '#occurrenceTypeSearchInput',
+        )
+        const hiddenInput = modalElement.querySelector<HTMLInputElement>(
+          '#occurrenceTypeSelectedValue',
+        )
 
         if (typeId && sgpData?.occurrenceTypes && searchInput && hiddenInput) {
           const found = sgpData.occurrenceTypes.find((t) => t.id === typeId)
@@ -441,26 +455,30 @@ export async function showOSModal(
       sgpData = existingDraft.sgpData as SgpData
       populateContracts(
         modalElement.querySelector('#modal-sgp-contracts-container'),
-        sgpData.contracts
+        sgpData.contracts,
       )
       populateOccurrenceTypes(
         modalElement.querySelector('#modal-occurrence-types-container'),
-        sgpData.occurrenceTypes
+        sgpData.occurrenceTypes,
       )
       sgpButton.disabled = false
 
       // Restaura contrato selecionado
       if (existingDraft.selectedContract) {
         const radio = modalElement.querySelector<HTMLInputElement>(
-          `input[name="selected_contract"][value="${existingDraft.selectedContract}"]`
+          `input[name="selected_contract"][value="${existingDraft.selectedContract}"]`,
         )
         if (radio) radio.checked = true
       }
 
       // Restaura tipo de ocorrência
       if (existingDraft.occurrenceType && existingDraft.occurrenceTypeText) {
-        const searchInput = modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSearchInput')
-        const hiddenInput = modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')
+        const searchInput = modalElement.querySelector<HTMLInputElement>(
+          '#occurrenceTypeSearchInput',
+        )
+        const hiddenInput = modalElement.querySelector<HTMLInputElement>(
+          '#occurrenceTypeSelectedValue',
+        )
         if (searchInput && hiddenInput) {
           searchInput.value = existingDraft.occurrenceTypeText
           hiddenInput.value = existingDraft.occurrenceType
@@ -474,11 +492,11 @@ export async function showOSModal(
             sgpData = response.data as SgpData
             populateContracts(
               modalElement.querySelector('#modal-sgp-contracts-container'),
-              sgpData.contracts
+              sgpData.contracts,
             )
             populateOccurrenceTypes(
               modalElement.querySelector('#modal-occurrence-types-container'),
-              sgpData.occurrenceTypes
+              sgpData.occurrenceTypes,
             )
             sgpButton.disabled = false
           } else {
@@ -504,11 +522,9 @@ export async function showOSModal(
     // Resolve contrato e cliente correto — assertion única aqui
     const resolvedSgpData = sgpData as unknown as SgpData
     const validContracts = resolvedSgpData?.contracts?.filter((c) => c?.id) ?? []
-    const selectedContractId =
-      userAction.data.selectedContract ?? (validContracts[0]?.id ?? null)
+    const selectedContractId = userAction.data.selectedContract ?? validContracts[0]?.id ?? null
     const selectedContractObj = validContracts.find((c) => c.id === selectedContractId)
-    const correctClientSgpId =
-      selectedContractObj?.clientId ?? resolvedSgpData?.clientSgpId ?? null
+    const correctClientSgpId = selectedContractObj?.clientId ?? resolvedSgpData?.clientSgpId ?? null
 
     const submissionData = {
       ...clientData,
