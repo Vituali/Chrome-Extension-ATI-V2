@@ -11,7 +11,8 @@ import { getSession, UserSession } from './auth/session'
 import { showOSModal } from './os/osModal'
 import { collectTextFromMessages } from './helpers'
 import { injectLoginBanner } from './auth/loginModal'
-import { injectQuickReply, injectQuickReplyLoading, removeQuickReply } from './Quickreply'
+import { injectQuickReply, injectQuickReplyLoading, removeQuickReply, getCachedReplies, setCachedReplies, clearQuickReplyCache } from './Quickreply'
+import { clearDraft } from './os/osDraft'
 // Sessão atual em memória
 let currentSession: UserSession | null = null
 
@@ -191,6 +192,7 @@ async function init(): Promise<void> {
   log(`Sessão ativa: ${session.username} (${session.role})`)
   injectButtons()
   injectListeners()
+  watchEncerrarAtendimento()
   loadQuickReplies(session)
 }
 
@@ -198,19 +200,42 @@ async function init(): Promise<void> {
 // QUICK REPLY — Carrega e injeta
 // =================================================================
 
+let quickReplyRetryTimeout: ReturnType<typeof setTimeout> | null = null
+let isLoadingQuickReplies = false
+
 async function loadQuickReplies(session: UserSession, attempt = 0): Promise<void> {
+  // Cancela retry anterior se existir
+  if (attempt === 0 && quickReplyRetryTimeout) {
+    clearTimeout(quickReplyRetryTimeout)
+    quickReplyRetryTimeout = null
+  }
+
+  // Evita chamadas duplicadas enquanto já está carregando
+  if (attempt === 0 && isLoadingQuickReplies) {
+    log('Quick replies já carregando, ignorando chamada duplicada.')
+    return
+  }
+
   const textarea = document.querySelector(SELECTORS.textarea)
-  
+
   if (!textarea) {
     if (attempt < 10) {
-      // Tenta novamente em 500ms por até 5 segundos
-      setTimeout(() => loadQuickReplies(session, attempt + 1), 500)
+      quickReplyRetryTimeout = setTimeout(() => loadQuickReplies(session, attempt + 1), 500)
     } else {
       log('Textarea não encontrado após 10 tentativas.')
     }
     return
   }
 
+  // Usa cache em memória — evita chamada ao Firebase a cada reinjeção
+  const cached = getCachedReplies()
+  if (cached) {
+    log('Quick replies restaurados do cache.')
+    injectQuickReply(cached)
+    return
+  }
+
+  isLoadingQuickReplies = true
   injectQuickReplyLoading()
   try {
     const response = await chrome.runtime.sendMessage({
@@ -218,11 +243,41 @@ async function loadQuickReplies(session: UserSession, attempt = 0): Promise<void
       username: session.username,
     })
     const replies = response?.replies ?? []
+    setCachedReplies(replies)
     injectQuickReply(replies)
   } catch (error) {
     logError('Erro ao carregar quick replies:', error)
     removeQuickReply()
+  } finally {
+    isLoadingQuickReplies = false
   }
+}
+
+// =================================================================
+// MONITOR — Botão "Encerrar atendimento"
+// Limpa draft da O.S quando o atendimento é encerrado
+// =================================================================
+
+let encerrarListenerAttached = false
+
+function watchEncerrarAtendimento(): void {
+  if (encerrarListenerAttached) return
+
+  document.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement
+    const btn = (target as HTMLElement).closest('button.btn_red')
+    if (btn?.querySelector('span')?.textContent?.trim() === 'Encerrar atendimento') {
+      const chatId = currentChatId
+      if (chatId) {
+        clearDraft(chatId)
+        log(`Draft da O.S limpo para atendimento ${chatId}`)
+      }
+      // Quick replies são por sessão — mantém cache, não limpa aqui
+    }
+  })
+
+  encerrarListenerAttached = true
+  log('Monitor de encerramento de atendimento ativo.')
 }
 
 // =================================================================

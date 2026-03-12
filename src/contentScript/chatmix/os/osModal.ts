@@ -5,6 +5,8 @@
 import './osModal.css'
 import { ClientData, SgpData, SgpContract } from '../../sgp/types'
 import { formatPhoneNumber } from '../helpers'
+import { saveDraft, loadDraft, clearDraft } from './osDraft'
+import { currentChatId } from '../state'
 
 // =================================================================
 // TIPOS LOCAIS
@@ -289,6 +291,10 @@ export async function showOSModal(
   const formattedPhone = phoneNumber ? formatPhoneNumber(phoneNumber) : ''
   const osBaseText = `${formattedPhone} ${firstName ?? ''} | `
   const cacheKey = cpfCnpj ?? fullName ?? phoneNumber
+  const chatId = currentChatId ?? cacheKey ?? 'unknown'
+
+  // --- Carrega rascunho anterior se existir ---
+  const existingDraft = chatId ? loadDraft(chatId) : null
 
   // --- Prepara templates ---
   const clientChatTexts = extractChatFn()
@@ -372,8 +378,26 @@ export async function showOSModal(
     const statusCheckbox = modalElement.querySelector<HTMLInputElement>('#occurrenceStatusCheckbox')!
     const statusLabel = modalElement.querySelector<HTMLElement>('#lblOccurrenceStatus')!
 
-    // Texto inicial
-    osTextArea.value = processDynamicPlaceholders(osBaseText).toUpperCase()
+    // Texto inicial — restaura draft ou usa base
+    if (existingDraft?.osText) {
+      osTextArea.value = existingDraft.osText
+    } else {
+      osTextArea.value = processDynamicPlaceholders(osBaseText).toUpperCase()
+    }
+
+    // Salva rascunho enquanto digita
+    osTextArea.addEventListener('input', () => {
+      if (chatId) {
+        saveDraft(chatId, {
+          osText: osTextArea.value,
+          selectedContract: modalElement.querySelector<HTMLInputElement>('input[name="selected_contract"]:checked')?.value ?? null,
+          selectedContractText: modalElement.querySelector<HTMLInputElement>('input[name="selected_contract"]:checked')?.closest('label')?.querySelector('span')?.textContent ?? null,
+          occurrenceType: modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')?.value ?? null,
+          occurrenceTypeText: modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSearchInput')?.value ?? null,
+          sgpData: sgpData,
+        })
+      }
+    })
 
     // Gerar O.S. trava Ocorrência Encerrada
     osCheckbox.addEventListener('change', () => {
@@ -412,32 +436,63 @@ export async function showOSModal(
       })
     })
 
-    // Busca dados do SGP via background
-    chrome.runtime
-      .sendMessage({ action: 'getSgpFormParams', clientData })
-      .then((response: any) => {
-        if (response?.success) {
-          sgpData = response.data as SgpData
-          populateContracts(
-            modalElement.querySelector('#modal-sgp-contracts-container'),
-            sgpData.contracts
-          )
-          populateOccurrenceTypes(
-            modalElement.querySelector('#modal-occurrence-types-container'),
-            sgpData.occurrenceTypes
-          )
-          sgpButton.disabled = false
-        } else {
-          throw new Error(response?.message ?? 'Falha ao buscar dados do SGP.')
+    // Busca dados do SGP — usa cache do draft se disponível
+    if (existingDraft?.sgpData) {
+      sgpData = existingDraft.sgpData as SgpData
+      populateContracts(
+        modalElement.querySelector('#modal-sgp-contracts-container'),
+        sgpData.contracts
+      )
+      populateOccurrenceTypes(
+        modalElement.querySelector('#modal-occurrence-types-container'),
+        sgpData.occurrenceTypes
+      )
+      sgpButton.disabled = false
+
+      // Restaura contrato selecionado
+      if (existingDraft.selectedContract) {
+        const radio = modalElement.querySelector<HTMLInputElement>(
+          `input[name="selected_contract"][value="${existingDraft.selectedContract}"]`
+        )
+        if (radio) radio.checked = true
+      }
+
+      // Restaura tipo de ocorrência
+      if (existingDraft.occurrenceType && existingDraft.occurrenceTypeText) {
+        const searchInput = modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSearchInput')
+        const hiddenInput = modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')
+        if (searchInput && hiddenInput) {
+          searchInput.value = existingDraft.occurrenceTypeText
+          hiddenInput.value = existingDraft.occurrenceType
         }
-      })
-      .catch((error: Error) => {
-        console.error('Extensão ATI: Erro ao buscar dados SGP.', error)
-        modalElement.querySelectorAll('.modal-loader').forEach((l) => {
-          l.textContent = `Erro: ${error.message}`
+      }
+    } else {
+      chrome.runtime
+        .sendMessage({ action: 'getSgpFormParams', clientData })
+        .then((response: any) => {
+          if (response?.success) {
+            sgpData = response.data as SgpData
+            populateContracts(
+              modalElement.querySelector('#modal-sgp-contracts-container'),
+              sgpData.contracts
+            )
+            populateOccurrenceTypes(
+              modalElement.querySelector('#modal-occurrence-types-container'),
+              sgpData.occurrenceTypes
+            )
+            sgpButton.disabled = false
+          } else {
+            throw new Error(response?.message ?? 'Falha ao buscar dados do SGP.')
+          }
         })
-        sgpButton.textContent = 'Falha no SGP'
-      })
+        .catch((error: Error) => {
+          console.error('Extensão ATI: Erro ao buscar dados SGP.', error)
+          modalElement.querySelectorAll('.modal-loader').forEach((l) => {
+            l.textContent = `Erro: ${error.message}`
+          })
+          sgpButton.textContent = 'Falha no SGP'
+        })
+    }
 
     // Aguarda ação do usuário
     const userAction = await resultPromise
@@ -468,6 +523,7 @@ export async function showOSModal(
 
     if (userAction.action === 'copy') {
       await navigator.clipboard.writeText(submissionData.osText)
+      if (chatId) clearDraft(chatId)
       console.log('Extensão ATI: O.S copiada.')
     } else if (userAction.action === 'fill_sgp') {
       if (
@@ -477,6 +533,7 @@ export async function showOSModal(
       ) {
         throw new Error('Descrição, Contrato e Tipo são obrigatórios.')
       }
+      if (chatId) clearDraft(chatId)
       console.log('Extensão ATI: Abrindo SGP para preenchimento...')
       chrome.runtime.sendMessage({ action: 'createOccurrenceVisually', data: submissionData })
     }

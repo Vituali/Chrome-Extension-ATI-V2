@@ -13,6 +13,24 @@ interface QuickReply {
   subCategory?: string
 }
 
+// Cache em memória — busca Firebase uma vez por sessão
+// Limpo apenas no logout (clearQuickReplyCache)
+let cachedReplies: QuickReply[] | null = null
+
+export function getCachedReplies(): QuickReply[] | null {
+  return cachedReplies
+}
+
+export function setCachedReplies(replies: QuickReply[]): void {
+  cachedReplies = replies
+  log(`Cache de quick replies salvo — ${replies.length} respostas.`)
+}
+
+export function clearQuickReplyCache(): void {
+  cachedReplies = null
+  log('Cache de quick replies limpo.')
+}
+
 // Aba ativa atual
 let activeTab = ''
 

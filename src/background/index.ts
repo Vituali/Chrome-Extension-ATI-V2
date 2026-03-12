@@ -476,8 +476,17 @@ async function getSgpFormParams(clientData: ClientData): Promise<any> {
     occurrenceTypes,
   }
 
-  sgpFormCache.set(cacheKey, result)
-  return result
+  const SGP_FORM_CACHE_MAX = 50
+
+  function setSgpFormCache(key: string, value: any): void {
+    if (sgpFormCache.size >= SGP_FORM_CACHE_MAX) {
+      const firstKey = sgpFormCache.keys().next().value as string
+      sgpFormCache.delete(firstKey)
+    }
+    sgpFormCache.set(key, value)
+  }
+  setSgpFormCache(cacheKey, result)
+  return result 
 }
 
 // =================================================================
