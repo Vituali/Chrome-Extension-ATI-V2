@@ -22,8 +22,8 @@
 
 <div align="center">
 
-| Sidebar com Quick Replies e Botões | Modal de Criar O.S |
-|---|---|
+| Sidebar com Quick Replies e Botões                                                                                | Modal de Criar O.S                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | ![Sidebar ATI com botões de ação e quick replies categorizados injetados no ChatMix](docs/screenshot-sidebar.png) | ![Modal de Criar Ordem de Serviço com status Online do contrato, tipo de ocorrência e modelos](docs/screenshot-modal.png) |
 
 </div>
@@ -33,16 +33,18 @@
 ## ✨ Funcionalidades
 
 ### 🔘 Botões na Sidebar do ChatMix
-| Botão | Função |
-|-------|--------|
-| 👤 **Contato** | Copia nome e telefone formatados |
-| 🤖 **Chat** | Gera prompt inteligente para IA com histórico limpo |
-| 📄 **CPF** | Copia CPF/CNPJ detectado nas mensagens |
-| 📝 **O.S** | Abre modal de abertura de ocorrência no SGP |
-| 🔄 **Atualizar** | Limpa cache e recarrega dados do cliente |
-| ↗️ **SGP** | Abre ficha do cliente diretamente no SGP |
+
+| Botão            | Função                                              |
+| ---------------- | --------------------------------------------------- |
+| 👤 **Contato**   | Copia nome e telefone formatados                    |
+| 🤖 **Chat**      | Gera prompt inteligente para IA com histórico limpo |
+| 📄 **CPF**       | Copia CPF/CNPJ detectado nas mensagens              |
+| 📝 **O.S**       | Abre modal de abertura de ocorrência no SGP         |
+| 🔄 **Atualizar** | Limpa cache e recarrega dados do cliente            |
+| ↗️ **SGP**       | Abre ficha do cliente diretamente no SGP            |
 
 ### 📝 Modal de O.S
+
 - Seleção de contrato com **status Online/Offline em tempo real**
 - Seleção de tipo de ocorrência com busca
 - Modelos de O.S personalizados por atendente
@@ -51,17 +53,20 @@
 - Limpo automaticamente ao encerrar o atendimento
 
 ### ⚡ Quick Replies
+
 - Respostas rápidas categorizadas injetadas acima do campo de mensagem
 - Dois níveis: categorias → respostas
 - Inserção com um clique no campo de texto
 - Cache em memória — **uma única leitura do Firebase por sessão**
 
 ### 🤖 Prompt para IA
+
 - Histórico limpo: remove mensagens de automação, transferências e menus de bot
 - Identifica mensagens do cliente vs atendente pelo DOM
 - Pronto para colar no ChatGPT, Claude ou qualquer IA
 
 ### 🔐 Autenticação
+
 - Login próprio integrado ao Firebase por atendente
 - Sessão persistida no `chrome.storage.local`
 - Controle de acesso por status (`ativo` / bloqueado)
@@ -136,14 +141,15 @@ src/
 ## 🚀 Desenvolvimento
 
 ### Pré-requisitos
+
 - Node.js 18+
 - npm ou yarn
 
 ### Instalação
 
 ```bash
-git clone https://github.com/Vituali/ATI.git
-cd ATI
+git clone https://github.com/Vituali/Chrome-Extension-ATI-V2.git
+cd Chrome-Extension-ATI-V2
 npm install
 ```
 
@@ -155,6 +161,9 @@ npm run build -- --watch
 
 # Build de produção
 npm run build
+
+# Build de envio para chrome web
+npm run zip
 ```
 
 ### Carregar no Chrome
@@ -187,7 +196,8 @@ respostas/{username}/[]          → { category, subCategory, text, title }
 
 ## 📋 Changelog
 
-### v2.0.1
+### v2.0.4
+
 - ✅ Status **Online/Offline** dos contratos no modal de O.S
 - ✅ Background desmembrado em módulos (`firebase`, `sgp/auth`, `sgp/contracts`, etc.)
 - ✅ Rascunho automático da O.S por atendimento (`sessionStorage`)
@@ -200,6 +210,7 @@ respostas/{username}/[]          → { category, subCategory, text, title }
 - ✅ Toggle switches no modal de O.S
 
 ### v2.0.0
+
 - 🎉 Reescrita completa — React + TypeScript + Manifest V3
 - 🔐 Sistema de login próprio com Firebase
 - 📝 Modal de O.S com preenchimento automático no SGP
