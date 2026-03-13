@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/icons/icon128.png" alt="ATI Logo" width="80" />
+<img src="public/img/logo-128.png" alt="ATI Logo" width="80" />
 
 # ATI — Auxiliar de Atendimentos
 
@@ -89,31 +89,40 @@ src/
 │       └── occurrence.ts        # Formulário, ocorrências e abertura de abas
 │
 ├── contentScript/
-│   └── chatmix/
-│       ├── index.ts             # Entry point — botões, observer, init
-│       ├── state.ts             # Estado global, seletores, debug
-│       ├── helpers.ts           # CPF/CNPJ, formatação, setNativeValue
-│       ├── getClientData.ts     # Extração de dados do DOM
-│       ├── buildAIPrompt.ts     # Gerador de prompt para IA
-│       ├── Quickreply.ts        # Quick replies com cache em memória
-│       ├── style.css
-│       ├── auth/
-│       │   ├── firebase.ts
-│       │   ├── session.ts
-│       │   ├── login.ts
-│       │   ├── loginModal.ts
-│       │   └── login.css
-│       └── os/
-│           ├── osModal.ts       # Modal de O.S completo
-│           ├── osDraft.ts       # Rascunho por chatId no sessionStorage
-│           └── osModal.css
+│   ├── chatmix/
+│   │   ├── index.ts             # Entry point — botões, observer, init
+│   │   ├── state.ts             # Estado global, seletores, debug
+│   │   ├── helpers.ts           # CPF/CNPJ, formatação, setNativeValue
+│   │   ├── getClientData.ts     # Extração de dados do DOM
+│   │   ├── buildAIPrompt.ts     # Gerador de prompt para IA
+│   │   ├── Quickreply.ts        # Quick replies com cache em memória
+│   │   ├── style.css
+│   │   ├── auth/
+│   │   │   ├── firebase.ts
+│   │   │   ├── session.ts
+│   │   │   ├── login.ts
+│   │   │   ├── loginModal.ts
+│   │   │   └── login.css
+│   │   └── os/
+│   │       ├── osModal.ts       # Modal de O.S completo
+│   │       ├── osDraft.ts       # Rascunho por chatId no sessionStorage
+│   │       └── osModal.css
+│   └── sgp/
+│       ├── actions.ts
+│       ├── fillForm.ts
+│       ├── sgpFill.js
+│       └── types.ts
 │
 ├── popup/
-│   ├── popup.html
-│   ├── main.tsx
+│   ├── Popup.html
 │   ├── Popup.tsx
-│   └── Popup.css
+│   ├── Popup.css
+│   └── main.tsx
 │
+├── assets/
+│   └── logo.png
+│
+├── global.d.ts
 └── manifest.ts
 ```
 
