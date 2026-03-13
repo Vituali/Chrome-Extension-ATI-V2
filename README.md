@@ -2,17 +2,19 @@
 
 <img src="public/img/logo-128.png" alt="ATI Logo" width="80" />
 
-# ATI — Auxiliar de Atendimentos
+# ATI — Customer Support Assistant
 
-**Extensão Chrome para otimizar o atendimento via ChatMix, integrada ao SGP.**
+**Chrome extension to streamline customer support via ChatMix, integrated with SGP.**
+
+🇧🇷 [Português](README.pt-br.md) · 🇺🇸 English
 
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/mlgmmjacfbnkolflbankfiackpcnmckl?label=Chrome%20Web%20Store&logo=googlechrome&logoColor=white&color=4285F4)](https://chromewebstore.google.com/detail/ati-auxiliar-de-atendimen/mlgmmjacfbnkolflbankfiackpcnmckl)
-[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/mlgmmjacfbnkolflbankfiackpcnmckl?color=34A853&label=Usuários)](https://chromewebstore.google.com/detail/ati-auxiliar-de-atendimen/mlgmmjacfbnkolflbankfiackpcnmckl)
+[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/mlgmmjacfbnkolflbankfiackpcnmckl?color=34A853&label=Users)](https://chromewebstore.google.com/detail/ati-auxiliar-de-atendimen/mlgmmjacfbnkolflbankfiackpcnmckl)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/mv3/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 
-[🔧 Central de Configuração](https://vituali.github.io/ATI) · [📦 Chrome Web Store](https://chromewebstore.google.com/detail/ati-auxiliar-de-atendimen/mlgmmjacfbnkolflbankfiackpcnmckl) · [📋 Changelog](#-changelog)
+[🔧 Admin Panel](https://vituali.github.io/ATI) · [📦 Chrome Web Store](https://chromewebstore.google.com/detail/ati-auxiliar-de-atendimen/mlgmmjacfbnkolflbankfiackpcnmckl) · [📋 Changelog](#-changelog)
 
 </div>
 
@@ -22,80 +24,75 @@
 
 <div align="center">
 
-| Sidebar com Quick Replies e Botões                                                                                | Modal de Criar O.S                                                                                                        |
-| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| ![Sidebar ATI com botões de ação e quick replies categorizados injetados no ChatMix](docs/screenshot-sidebar.png) | ![Modal de Criar Ordem de Serviço com status Online do contrato, tipo de ocorrência e modelos](docs/screenshot-modal.png) |
+| Sidebar with Quick Replies & Buttons | Create Service Order Modal |
+|---|---|
+| ![ATI sidebar with action buttons and categorized quick replies injected into ChatMix](docs/screenshot-sidebar.png) | ![Create Service Order modal with contract Online status, occurrence type and templates](docs/screenshot-modal.png) |
 
 </div>
 
 ---
 
-## ✨ Funcionalidades
+## ✨ Features
 
-### 🔘 Botões na Sidebar do ChatMix
+### 🔘 ChatMix Sidebar Buttons
+| Button | Description |
+|--------|-------------|
+| 👤 **Contact** | Copies formatted name and phone number |
+| 🤖 **Chat** | Generates a clean AI prompt from the chat history |
+| 📄 **CPF** | Copies the CPF/CNPJ detected in the messages |
+| 📝 **O.S** | Opens the service order creation modal |
+| 🔄 **Refresh** | Clears cache and reloads client data |
+| ↗️ **SGP** | Opens the client's profile directly in SGP |
 
-| Botão            | Função                                              |
-| ---------------- | --------------------------------------------------- |
-| 👤 **Contato**   | Copia nome e telefone formatados                    |
-| 🤖 **Chat**      | Gera prompt inteligente para IA com histórico limpo |
-| 📄 **CPF**       | Copia CPF/CNPJ detectado nas mensagens              |
-| 📝 **O.S**       | Abre modal de abertura de ocorrência no SGP         |
-| 🔄 **Atualizar** | Limpa cache e recarrega dados do cliente            |
-| ↗️ **SGP**       | Abre ficha do cliente diretamente no SGP            |
-
-### 📝 Modal de O.S
-
-- Seleção de contrato com **status Online/Offline em tempo real**
-- Seleção de tipo de ocorrência com busca
-- Modelos de O.S personalizados por atendente
-- Preenchimento automático do formulário no SGP
-- **Rascunho automático** — salva o texto ao digitar e restaura ao reabrir
-- Limpo automaticamente ao encerrar o atendimento
+### 📝 Service Order Modal
+- Contract selection with **real-time Online/Offline status**
+- Occurrence type selector with search
+- Per-agent O.S templates
+- Automatic form fill in SGP
+- **Auto-draft** — saves text as you type and restores on reopen
+- Automatically cleared when the attendance is closed
 
 ### ⚡ Quick Replies
+- Categorized quick replies injected above the message input
+- Two-level navigation: categories → replies
+- One-click insert into the text field
+- In-memory cache — **single Firebase read per session**
 
-- Respostas rápidas categorizadas injetadas acima do campo de mensagem
-- Dois níveis: categorias → respostas
-- Inserção com um clique no campo de texto
-- Cache em memória — **uma única leitura do Firebase por sessão**
+### 🤖 AI Prompt Generator
+- Clean history: strips automation messages, transfers and bot menus
+- Identifies client vs agent messages from the DOM
+- Ready to paste into ChatGPT, Claude or any AI
 
-### 🤖 Prompt para IA
-
-- Histórico limpo: remove mensagens de automação, transferências e menus de bot
-- Identifica mensagens do cliente vs atendente pelo DOM
-- Pronto para colar no ChatGPT, Claude ou qualquer IA
-
-### 🔐 Autenticação
-
-- Login próprio integrado ao Firebase por atendente
-- Sessão persistida no `chrome.storage.local`
-- Controle de acesso por status (`ativo` / bloqueado)
+### 🔐 Authentication
+- Firebase-backed per-agent login
+- Session persisted in `chrome.storage.local`
+- Access control by status (`active` / blocked)
 
 ---
 
-## 🏗️ Arquitetura
+## 🏗️ Architecture
 
 ```
 src/
-├── background/                  # Service Worker (lógica de rede e CORS)
-│   ├── index.ts                 # Entry point — listener de mensagens
-│   ├── firebase.ts              # Auth, templates e quick replies
+├── background/                  # Service Worker (network & CORS logic)
+│   ├── index.ts                 # Entry point — message listener
+│   ├── firebase.ts              # Auth, templates and quick replies
 │   └── sgp/
-│       ├── constants.ts         # URLs, TTLs e interfaces
-│       ├── cache.ts             # Cache do formulário (máx. 50 entradas)
-│       ├── auth.ts              # Login SGP com cache de sessão
-│       ├── search.ts            # Busca de clientes (CPF, nome, telefone)
-│       ├── contracts.ts         # Contratos + status online/offline
-│       └── occurrence.ts        # Formulário, ocorrências e abertura de abas
+│       ├── constants.ts         # URLs, TTLs and interfaces
+│       ├── cache.ts             # Form cache (max 50 entries)
+│       ├── auth.ts              # SGP login with session cache
+│       ├── search.ts            # Client search (CPF, name, phone)
+│       ├── contracts.ts         # Contracts + online/offline status
+│       └── occurrence.ts        # Forms, occurrences and tab management
 │
 ├── contentScript/
 │   ├── chatmix/
-│   │   ├── index.ts             # Entry point — botões, observer, init
-│   │   ├── state.ts             # Estado global, seletores, debug
-│   │   ├── helpers.ts           # CPF/CNPJ, formatação, setNativeValue
-│   │   ├── getClientData.ts     # Extração de dados do DOM
-│   │   ├── buildAIPrompt.ts     # Gerador de prompt para IA
-│   │   ├── Quickreply.ts        # Quick replies com cache em memória
+│   │   ├── index.ts             # Entry point — buttons, observer, init
+│   │   ├── state.ts             # Global state, selectors, debug
+│   │   ├── helpers.ts           # CPF/CNPJ, formatting, setNativeValue
+│   │   ├── getClientData.ts     # DOM data extraction
+│   │   ├── buildAIPrompt.ts     # AI prompt generator
+│   │   ├── Quickreply.ts        # Quick replies with in-memory cache
 │   │   ├── style.css
 │   │   ├── auth/
 │   │   │   ├── firebase.ts
@@ -104,8 +101,8 @@ src/
 │   │   │   ├── loginModal.ts
 │   │   │   └── login.css
 │   │   └── os/
-│   │       ├── osModal.ts       # Modal de O.S completo
-│   │       ├── osDraft.ts       # Rascunho por chatId no sessionStorage
+│   │       ├── osModal.ts       # Full service order modal
+│   │       ├── osDraft.ts       # Per-chat draft in sessionStorage
 │   │       └── osModal.css
 │   └── sgp/
 │       ├── actions.ts
@@ -128,24 +125,23 @@ src/
 
 ---
 
-## 🛠️ Stack
+## 🛠️ Tech Stack
 
-- **React 18** + **TypeScript** — Popup
-- **Vite** — Build com Manifest V3
-- **Firebase Realtime Database** — Modelos, quick replies e autenticação
+- **React 18** + **TypeScript** — Popup UI
+- **Vite** — Manifest V3 build pipeline
+- **Firebase Realtime Database** — Templates, quick replies and auth
 - **Chrome Extensions API** — Storage, Tabs, SidePanel
-- **MutationObserver** com debounce — Detecção de troca de atendimento
+- **MutationObserver** with debounce — Attendance change detection
 
 ---
 
-## 🚀 Desenvolvimento
+## 🚀 Development
 
-### Pré-requisitos
-
+### Prerequisites
 - Node.js 18+
-- npm ou yarn
+- npm or yarn
 
-### Instalação
+### Setup
 
 ```bash
 git clone https://github.com/Vituali/Chrome-Extension-ATI-V2.git
@@ -156,34 +152,34 @@ npm install
 ### Build
 
 ```bash
-# Build com watch (desenvolvimento)
+# Development build with watch
 npm run build -- --watch
 
-# Build de produção
+# Production build
 npm run build
 
-# Build de envio para chrome web
+# Build and package for Chrome Web Store submission
 npm run zip
 ```
 
-### Carregar no Chrome
+### Load in Chrome
 
-1. Acesse `chrome://extensions/`
-2. Ative o **Modo desenvolvedor**
-3. Clique em **Carregar sem compactação**
-4. Selecione a pasta `dist/`
+1. Go to `chrome://extensions/`
+2. Enable **Developer mode**
+3. Click **Load unpacked**
+4. Select the `dist/` folder
 
 ---
 
-## ⚙️ Configuração
+## ⚙️ Configuration
 
-A central de configuração da extensão está disponível em **[vituali.github.io/ATI](https://vituali.github.io/ATI)**, onde administradores podem:
+The admin panel is available at **[vituali.github.io/ATI](https://vituali.github.io/ATI)**, where administrators can:
 
-- 👥 Gerenciar atendentes (criar, bloquear, definir roles)
-- 📋 Criar e editar **modelos de O.S** por atendente
-- ⚡ Criar e editar **quick replies** com categorias e subcategorias
+- 👥 Manage agents (create, block, assign roles)
+- 📋 Create and edit **O.S templates** per agent
+- ⚡ Create and edit **quick replies** with categories and subcategories
 
-### Estrutura do Firebase
+### Firebase Structure
 
 ```
 admins/{uid}                     → true
@@ -197,34 +193,32 @@ respostas/{username}/[]          → { category, subCategory, text, title }
 ## 📋 Changelog
 
 ### v2.0.4
-
-- ✅ Status **Online/Offline** dos contratos no modal de O.S
-- ✅ Background desmembrado em módulos (`firebase`, `sgp/auth`, `sgp/contracts`, etc.)
-- ✅ Rascunho automático da O.S por atendimento (`sessionStorage`)
-- ✅ Cache de quick replies em memória — uma leitura Firebase por sessão
-- ✅ Debounce no MutationObserver — compatibilidade com Vue virtual scroller
-- ✅ Proteção contra inits e carregamentos simultâneos
-- ✅ Limite de 50 entradas no cache do formulário SGP
-- ✅ AbortSignal.timeout em todas as fetches do SGP
-- ✅ Prompt para IA com histórico limpo (remove automação/transferências)
-- ✅ Toggle switches no modal de O.S
+- ✅ **Online/Offline** status for contracts in the O.S modal
+- ✅ Background refactored into modules (`firebase`, `sgp/auth`, `sgp/contracts`, etc.)
+- ✅ Auto-draft per attendance in `sessionStorage`
+- ✅ Quick reply in-memory cache — single Firebase read per session
+- ✅ MutationObserver debounce — Vue virtual scroller compatibility
+- ✅ Guards against simultaneous inits and duplicate loads
+- ✅ SGP form cache capped at 50 entries
+- ✅ `AbortSignal.timeout` on all SGP fetches
+- ✅ AI prompt with clean history (strips automation/transfers)
+- ✅ Toggle switches in the O.S modal
 
 ### v2.0.0
-
-- 🎉 Reescrita completa — React + TypeScript + Manifest V3
-- 🔐 Sistema de login próprio com Firebase
-- 📝 Modal de O.S com preenchimento automático no SGP
-- ⚡ Quick replies categorizados
-- 🤖 Detecção automática de troca de atendimento
+- 🎉 Full rewrite — React + TypeScript + Manifest V3
+- 🔐 Firebase-backed per-agent login system
+- 📝 O.S modal with automatic SGP form fill
+- ⚡ Categorized quick replies
+- 🤖 Automatic attendance change detection
 
 ---
 
-## 👤 Autor
+## 👤 Author
 
-Desenvolvido por **Vituali** para uso interno na **ATI Internet**.
+Built by **Vituali** for internal use at **ATI Internet**.
 
 ---
 
 <div align="center">
-<sub>Disponível na <a href="https://chromewebstore.google.com/detail/ati-auxiliar-de-atendimen/mlgmmjacfbnkolflbankfiackpcnmckl">Chrome Web Store</a></sub>
+<sub>Available on the <a href="https://chromewebstore.google.com/detail/ati-auxiliar-de-atendimen/mlgmmjacfbnkolflbankfiackpcnmckl">Chrome Web Store</a></sub>
 </div>
