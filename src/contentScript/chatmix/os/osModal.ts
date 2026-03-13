@@ -77,19 +77,6 @@ export function processDynamicPlaceholders(text: string): string {
 }
 
 // =================================================================
-// SUGESTÃO DE TEMPLATE
-// =================================================================
-
-function findSuggestedTemplate(chatTexts: string[], templates: OsTemplate[]): OsTemplate | null {
-  const chatContent = chatTexts.join(' ').toLowerCase()
-  return (
-    templates.find(
-      (t) => t.keywords && t.keywords.some((kw) => chatContent.includes(kw.toLowerCase())),
-    ) ?? null
-  )
-}
-
-// =================================================================
 // POPULAR CONTRATOS
 // =================================================================
 
@@ -295,7 +282,6 @@ export async function showOSModal(
 
   // --- Prepara templates ---
   const clientChatTexts = extractChatFn()
-  const suggestedTemplate = findSuggestedTemplate(clientChatTexts, allTemplates)
 
   const templatesByCategory = (allTemplates ?? []).reduce<Record<string, OsTemplate[]>>(
     (acc, t) => {
@@ -321,21 +307,9 @@ export async function showOSModal(
       `</div>`
   }
 
-  const suggestionHTML = suggestedTemplate
-    ? `<div class="modal-suggestion">
-        <strong>Sugestão:</strong>
-        <button class="template-btn template-btn--suggestion"
-          data-template-text="${suggestedTemplate.text.replace(/"/g, '&quot;')}"
-          data-occurrence-type-id="${suggestedTemplate.occurrenceTypeId ?? ''}">
-          ${suggestedTemplate.title}
-        </button>
-       </div>`
-    : ''
-
   const modalConfig: ModalConfig = {
     title: 'Criar Ordem de Serviço',
     bodyHTML: `
-      ${suggestionHTML}
       <div id="modal-sgp-contracts-container"><div class="modal-loader">Carregando contratos...</div></div>
       <div id="modal-occurrence-types-container"><div class="modal-loader">Carregando tipos de ocorrência...</div></div>
 
@@ -344,17 +318,18 @@ export async function showOSModal(
 
       <div class="modal-checkboxes">
         <label class="modal-checkbox-label" id="lblOccurrenceStatus">
-          <input type="checkbox" id="occurrenceStatusCheckbox" checked>
           <span>Ocorrência Encerrada?</span>
+          <input type="checkbox" id="occurrenceStatusCheckbox" checked>
+          <span class="toggle-track"></span>
         </label>
         <label class="modal-checkbox-label">
-          <input type="checkbox" id="shouldCreateOSCheckbox">
           <span>Gerar O.S.?</span>
+          <input type="checkbox" id="shouldCreateOSCheckbox">
+          <span class="toggle-track"></span>
         </label>
       </div>
 
       <div class="modal-templates-container">
-        <strong>Modelos</strong>
         ${templatesHTML}
       </div>
     `,
