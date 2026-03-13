@@ -123,35 +123,21 @@
   color: white;
 }
 
-/* --- Sugestão --- */
-.modal-suggestion {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-  padding: 10px 14px;
-  background: rgba(0, 100, 255, 0.08);
-  border: 1px solid rgba(0, 100, 255, 0.2);
-  border-radius: 10px;
-  flex-wrap: wrap;
-}
-
-.modal-suggestion strong {
+.contract-status {
   font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgb(100, 160, 255);
-  font-family: 'Space Mono', monospace;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-left: auto;
+  flex-shrink: 0;
 }
-
-.template-btn--suggestion {
-  background: rgba(0, 100, 255, 0.2);
-  border-color: rgba(0, 100, 255, 0.5);
-  color: rgb(150, 190, 255);
+.contract-status--online {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
 }
-
-.template-btn--suggestion:hover {
-  background: rgba(0, 100, 255, 0.35);
+.contract-status--offline {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
 }
 
 /* --- Textarea e inputs --- */
@@ -169,6 +155,10 @@
     border-color 0.2s,
     box-shadow 0.2s;
   outline: none;
+}
+
+label.modal-textarea-label {
+  color: rgb(100, 160, 255);
 }
 
 .ati-os-modal .modal-textarea {
@@ -206,29 +196,78 @@ input.modal-textarea {
   font-family: 'Space Mono', monospace;
 }
 
-/* --- Checkboxes (toggle switch) --- */
+/* --- Toggles --- */
 .modal-checkboxes {
   display: flex;
-  justify-content: space-between;
-  gap: 20px;
+  flex-direction: row;
+  gap: 10px;
   margin-top: 14px;
-  flex-wrap: wrap;
 }
 
 .modal-checkbox-label {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   cursor: pointer;
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  transition: background 0.15s;
   user-select: none;
-  transition: opacity 0.2s;
+}
+
+.modal-checkbox-label:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .modal-checkbox-label.disabled {
   opacity: 0.4;
   pointer-events: none;
+}
+
+/* Esconde o input nativo */
+.modal-checkbox-label input[type='checkbox'] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+/* Track */
+.modal-checkbox-label .toggle-track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+/* Thumb */
+.modal-checkbox-label .toggle-track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  transition: left 0.2s;
+}
+
+/* Checked */
+.modal-checkbox-label input:checked ~ .toggle-track {
+  background: #5348c7;
+}
+
+.modal-checkbox-label input:checked ~ .toggle-track::after {
+  left: 19px;
 }
 
 .ati-os-modal-body input[type='checkbox'] {
@@ -345,10 +384,15 @@ input.modal-textarea {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  font-size: 12px;
   width: 100%;
   text-align: left;
   line-height: 1.5;
   padding: 10px 14px;
+}
+
+label.template-btn.contract-item {
+  font-size: 14px;
 }
 
 .template-btn.contract-item input[type='radio'] {

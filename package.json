@@ -1,7 +1,7 @@
 {
   "name": "ati-auxiliar-de-atendimentos",
   "displayName": "ATI - Auxiliar de Atendimentos",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "author": "Vituali",
   "description": "Extensão para auxiliar atendentes do suporte ATI Internet no ChatMix",
   "type": "module",
@@ -34,6 +34,7 @@
     "@types/react": "^18.2.28",
     "@types/react-dom": "^18.2.13",
     "@vitejs/plugin-react": "^4.1.0",
+    "eslint": "^10.0.3",
     "gulp": "^5.0.0",
     "gulp-zip": "^6.0.0",
     "prettier": "^3.0.3",

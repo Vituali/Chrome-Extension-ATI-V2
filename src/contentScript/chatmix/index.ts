@@ -10,16 +10,9 @@ import { setCachedContract, smartOpenSGP } from '../sgp/actions'
 import { getSession, UserSession } from './auth/session'
 import { showOSModal } from './os/osModal'
 import { collectTextFromMessages } from './helpers'
+import { buildAIPrompt } from './buildAIPrompt'
 import { injectLoginBanner } from './auth/loginModal'
-import {
-  injectQuickReply,
-  injectQuickReplyLoading,
-  removeQuickReply,
-  getCachedReplies,
-  setCachedReplies,
-  clearQuickReplyCache,
-} from './Quickreply'
-import { clearDraft } from './os/osDraft'
+import { injectQuickReply, injectQuickReplyLoading, removeQuickReply } from './Quickreply'
 // Sessão atual em memória
 let currentSession: UserSession | null = null
 
@@ -86,10 +79,11 @@ const actions: Record<string, () => Promise<void>> = {
   },
 
   'ati-copy-prompt': async () => {
-    const btn = document.querySelector<HTMLButtonElement>(SELECTORS.copyChatBtn)
-    if (!btn) throw new Error('Botão de cópia do chat não encontrado.')
-    btn.click()
-    log('Chat copiado via botão nativo do ChatMix.')
+    const data = await getClientData()
+    const prompt = buildAIPrompt(data.firstName ?? data.fullName ?? 'Cliente')
+    if (!prompt) throw new Error('Não foi possível extrair mensagens do chat.')
+    await navigator.clipboard.writeText(prompt)
+    log('Prompt de IA copiado.')
   },
 
   'ati-copy-cpf': async () => {
@@ -201,7 +195,6 @@ async function init(): Promise<void> {
   log(`Sessão ativa: ${session.username} (${session.role})`)
   injectButtons()
   injectListeners()
-  watchEncerrarAtendimento()
   loadQuickReplies(session)
 }
 
@@ -209,42 +202,19 @@ async function init(): Promise<void> {
 // QUICK REPLY — Carrega e injeta
 // =================================================================
 
-let quickReplyRetryTimeout: ReturnType<typeof setTimeout> | null = null
-let isLoadingQuickReplies = false
-
 async function loadQuickReplies(session: UserSession, attempt = 0): Promise<void> {
-  // Cancela retry anterior se existir
-  if (attempt === 0 && quickReplyRetryTimeout) {
-    clearTimeout(quickReplyRetryTimeout)
-    quickReplyRetryTimeout = null
-  }
-
-  // Evita chamadas duplicadas enquanto já está carregando
-  if (attempt === 0 && isLoadingQuickReplies) {
-    log('Quick replies já carregando, ignorando chamada duplicada.')
-    return
-  }
-
   const textarea = document.querySelector(SELECTORS.textarea)
 
   if (!textarea) {
     if (attempt < 10) {
-      quickReplyRetryTimeout = setTimeout(() => loadQuickReplies(session, attempt + 1), 500)
+      // Tenta novamente em 500ms por até 5 segundos
+      setTimeout(() => loadQuickReplies(session, attempt + 1), 500)
     } else {
       log('Textarea não encontrado após 10 tentativas.')
     }
     return
   }
 
-  // Usa cache em memória — evita chamada ao Firebase a cada reinjeção
-  const cached = getCachedReplies()
-  if (cached) {
-    log('Quick replies restaurados do cache.')
-    injectQuickReply(cached)
-    return
-  }
-
-  isLoadingQuickReplies = true
   injectQuickReplyLoading()
   try {
     const response = await chrome.runtime.sendMessage({
@@ -252,75 +222,37 @@ async function loadQuickReplies(session: UserSession, attempt = 0): Promise<void
       username: session.username,
     })
     const replies = response?.replies ?? []
-    setCachedReplies(replies)
     injectQuickReply(replies)
   } catch (error) {
     logError('Erro ao carregar quick replies:', error)
     removeQuickReply()
-  } finally {
-    isLoadingQuickReplies = false
   }
 }
 
 // =================================================================
-// MONITOR — Botão "Encerrar atendimento"
-// Limpa draft da O.S quando o atendimento é encerrado
+// OBSERVER
 // =================================================================
-
-let encerrarListenerAttached = false
-
-function watchEncerrarAtendimento(): void {
-  if (encerrarListenerAttached) return
-
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement
-    const btn = (target as HTMLElement).closest('button.btn_red')
-    if (btn?.querySelector('span')?.textContent?.trim() === 'Encerrar atendimento') {
-      const chatId = currentChatId
-      if (chatId) {
-        clearDraft(chatId)
-        log(`Draft da O.S limpo para atendimento ${chatId}`)
-      }
-      // Quick replies são por sessão — mantém cache, não limpa aqui
-    }
-  })
-
-  encerrarListenerAttached = true
-  log('Monitor de encerramento de atendimento ativo.')
-}
-
-// =================================================================
-// OBSERVER OTIMIZADO (COM DEBOUNCE)
-// =================================================================
-
-let observerTimeout: ReturnType<typeof setTimeout> | null = null
 
 const observer = new MutationObserver(() => {
-  // Se o Vue continuar disparando mutações na tela, cancelamos a verificação
-  if (observerTimeout) clearTimeout(observerTimeout)
+  const sidebar = document.querySelector(SELECTORS.sidebar)
+  const hasButtons = document.getElementById('actionsContainerV2')
+  const hasBanner = document.getElementById('ati-login-banner')
+  const hasQuickReply = document.getElementById('ati-quick-reply-container')
+  const hasTextarea = document.querySelector(SELECTORS.textarea)
 
-  // Espera 150ms de "silêncio" no DOM para agir.
-  // Isso impede que a extensão brigue com o vue-virtual-scroller.
-  observerTimeout = setTimeout(() => {
-    const sidebar = document.querySelector(SELECTORS.sidebar)
-    const hasButtons = document.getElementById('actionsContainerV2')
-    const hasBanner = document.getElementById('ati-login-banner')
-    const hasQuickReply = document.getElementById('ati-quick-reply-container')
-    const hasTextarea = document.querySelector(SELECTORS.textarea)
+  checkSessionChange()
 
-    checkSessionChange()
+  if (sidebar && !hasButtons && !hasBanner) {
+    log('Sidebar sem conteúdo, reinjetando...')
+    init()
+    return
+  }
 
-    if (sidebar && !hasButtons && !hasBanner) {
-      log('Sidebar sem conteúdo, reinjetando...')
-      init()
-      return
-    }
-
-    if (hasTextarea && !hasQuickReply && currentSession) {
-      log('Quick reply sumiu, reinjetando...')
-      loadQuickReplies(currentSession)
-    }
-  }, 150) // 150 milissegundos é o tempo mágico
+  // Reinjetar quick reply se textarea existe mas container sumiu
+  if (hasTextarea && !hasQuickReply && currentSession) {
+    log('Quick reply sumiu, reinjetando...')
+    loadQuickReplies(currentSession)
+  }
 })
 
 observer.observe(document.body, { childList: true, subtree: true })

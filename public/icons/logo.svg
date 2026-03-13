@@ -1,2 +1,18 @@
-<?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1656468723058" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3824" width="256" height="256" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css">@font-face { font-family: feedback-iconfont; src: url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff2?t=1630033759944") format("woff2"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.woff?t=1630033759944") format("woff"), url("//at.alicdn.com/t/font_1031158_u69w8yhxdu.ttf?t=1630033759944") format("truetype"); }
-</style></defs><path d="M512 0C228.266667 0 0 228.266667 0 512s228.266667 512 512 512 512-228.266667 512-512S795.733333 0 512 0z m224 727.466667c0 23.466667-17.066667 40.533333-40.533333 40.533333H328.533333c-21.333333 0-40.533333-19.2-40.533333-40.533333V296.533333c0-23.466667 17.066667-40.533333 40.533333-40.533333h366.933334c21.333333 0 40.533333 19.2 40.533333 40.533333v430.933334z" fill="#61dafb" p-id="3825" data-spm-anchor-id="a313x.7781069.0.i0" class=""></path><path d="M473.6 727.466667h221.866667V411.733333H473.6v315.733334zM328.533333 727.466667h106.666667V411.733333h-106.666667v315.733334zM328.533333 296.533333v74.666667h369.066667V298.666667H328.533333z" fill="#61dafb" p-id="3826" data-spm-anchor-id="a313x.7781069.0.i2" class=""></path></svg>
+<?xml version="1.0"?>
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="grad" x1="0%" x2="100%" y1="0%" y2="100%">
+   <stop offset="0%" stop-color="#007BFF"/>
+   <stop offset="100%" stop-color="#00C6FF"/>
+  </linearGradient>
+ </defs>
+ <!-- Fundo -->
+ <!-- Balão de chat -->
+ <!-- Raio (internet / velocidade) -->
+ <g class="layer">
+  <title>Layer 1</title>
+  <rect fill="url(#grad)" height="448" id="svg_1" rx="96" width="448" x="32" y="32"/>
+  <path d="m140,107.37l232,0a40,77.74 0 0 1 40,77.74l0,155.49a40,77.74 0 0 1 -40,77.74l-120,0l-78.99,104.59l-1.03,-103.05l-31.98,-1.54a40,77.74 0 0 1 -40,-77.74l0,-155.49a40,77.74 0 0 1 40,-77.74z" fill="white" id="svg_2" transform="matrix(1.23719 0 0 0.981731 -59.1365 -37.3353)"/>
+  <polygon fill="#007BFF" id="svg_3" points="270,190 230,260 270,260 240,330 320,240 280,240" transform="matrix(1.84193 0 0 1.85816 -240.72 -261.778)"/>
+ </g>
+</svg>
