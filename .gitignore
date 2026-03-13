@@ -22,3 +22,4 @@
 # secrets
 secrets.*.js
 build.zip
+src/background/files.zip

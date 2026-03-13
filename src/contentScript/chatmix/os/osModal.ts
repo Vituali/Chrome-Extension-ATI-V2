@@ -94,14 +94,21 @@ function populateContracts(container: Element | null, contracts: SgpContract[]):
   }
 
   const html = valid
-    .map(
-      (contract, index) => `
+    .map((contract, index) => {
+      const badge =
+        contract.online === true
+          ? `<span class="contract-status contract-status--online">● Online</span>`
+          : contract.online === false
+            ? `<span class="contract-status contract-status--offline">● Offline</span>`
+            : ''
+      return `
       <label class="template-btn contract-item">
         <input type="radio" name="selected_contract" value="${contract.id}" ${index === 0 ? 'checked' : ''}>
         <span>${contract.text}</span>
+        ${badge}
       </label>
-    `,
-    )
+    `
+    })
     .join('')
 
   container.innerHTML = `
