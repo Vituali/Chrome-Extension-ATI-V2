@@ -142,8 +142,8 @@ src/
 ### Instalação
 
 ```bash
-git clone https://github.com/Vituali/Chrome-Extension-ATI-V2.git
-cd Chrome-Extension-ATI-V2
+git clone https://github.com/Vituali/ATI.git
+cd ATI
 npm install
 ```
 
@@ -155,9 +155,6 @@ npm run build -- --watch
 
 # Build de produção
 npm run build
-
-# Build de envio para chrome web
-npm run zip
 ```
 
 ### Carregar no Chrome
@@ -190,8 +187,7 @@ respostas/{username}/[]          → { category, subCategory, text, title }
 
 ## 📋 Changelog
 
-### v2.0.4
-
+### v2.0.1
 - ✅ Status **Online/Offline** dos contratos no modal de O.S
 - ✅ Background desmembrado em módulos (`firebase`, `sgp/auth`, `sgp/contracts`, etc.)
 - ✅ Rascunho automático da O.S por atendimento (`sessionStorage`)
