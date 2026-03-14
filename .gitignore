@@ -24,3 +24,4 @@ secrets.*.js
 build.zip
 src/background/files.zip
 estrutura.txt
+refactoring_tracklist.md

@@ -3,12 +3,13 @@
 // =================================================================
 
 import { handleFirebaseLogin, getOsTemplates, getQuickReplies } from './firebase'
-import { handleOpenInSgp, getSgpFormParams, createOccurrenceVisually } from './sgp/occurrence'
+import { handleOpenInSgp, getSgpFormParams, createOccurrenceVisually, refreshSgpOnlineStatuses } from './sgp/occurrence'
 import { deleteSgpFormCache } from './sgp/cache'
+import type { ExtensionRequest } from './types'
 
 console.log('Extensão ATI: Background iniciado.')
 
-chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request: ExtensionRequest, _sender, sendResponse) => {
   if (request.action === 'firebaseLogin') {
     handleFirebaseLogin(request.email, request.password)
       .then((result) => sendResponse(result))
@@ -24,7 +25,7 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   }
 
   if (request.action === 'getSgpFormParams') {
-    getSgpFormParams(request.clientData)
+    getSgpFormParams(request.clientData, request.chatId)
       .then((data) => sendResponse({ success: true, data }))
       .catch((error) => sendResponse({ success: false, message: error.message }))
     return true
@@ -54,6 +55,13 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
     getQuickReplies(request.username)
       .then((replies) => sendResponse({ success: true, replies }))
       .catch((error) => sendResponse({ success: false, replies: [], error: error.message }))
+    return true
+  }
+
+  if (request.action === 'refreshSgpOnlineStatuses') {
+    refreshSgpOnlineStatuses(request.clientData, request.chatId)
+      .then((data) => sendResponse({ success: true, data }))
+      .catch((error) => sendResponse({ success: false, error: error.message }))
     return true
   }
 })

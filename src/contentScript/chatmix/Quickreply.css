@@ -1,5 +1,5 @@
-/* =================================================================== */
-/* == QUICK REPLY — Respostas rápidas acima do textarea             == */
+﻿/* =================================================================== */
+/* == QUICK REPLY ÔÇö Respostas r├ípidas acima do textarea             == */
 /* =================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap');
@@ -46,7 +46,7 @@
   color: rgb(100, 160, 255);
 }
 
-/* --- Botões de resposta --- */
+/* --- Bot├Áes de resposta --- */
 .ati-qr-buttons {
   display: flex;
   flex-wrap: wrap;

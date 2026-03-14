@@ -12,7 +12,8 @@ import { showOSModal } from './os/osModal'
 import { collectTextFromMessages } from './helpers'
 import { buildAIPrompt } from './buildAIPrompt'
 import { injectLoginBanner } from './auth/loginModal'
-import { injectQuickReply, injectQuickReplyLoading, removeQuickReply } from './Quickreply'
+import { injectQuickReply, injectQuickReplyLoading, removeQuickReply } from './quickReply'
+import type { GetOsTemplatesRequest, OpenInSgpRequest, GetQuickRepliesRequest, ClearSgpCacheRequest } from '../../background/types'
 // Sessão atual em memória
 let currentSession: UserSession | null = null
 
@@ -107,7 +108,7 @@ const actions: Record<string, () => Promise<void>> = {
 
     // Busca templates do Firebase (modelos_os do atendente)
     const response = await Promise.race([
-      chrome.runtime.sendMessage({
+      chrome.runtime.sendMessage<GetOsTemplatesRequest>({
         action: 'getOsTemplates',
         username: session.username,
         idToken: session.idToken,
@@ -127,7 +128,7 @@ const actions: Record<string, () => Promise<void>> = {
   'ati-open-sgp': async () => {
     const data = await getClientData()
     if (!data.isIdentified && !data.cpfCnpj && !data.phoneNumber) {
-      chrome.runtime.sendMessage({ action: 'openInSgp', clientData: data, cachedContract: null })
+      chrome.runtime.sendMessage<OpenInSgpRequest>({ action: 'openInSgp', clientData: data, cachedContract: null })
       return
     }
     await smartOpenSGP(data)
@@ -145,6 +146,12 @@ function injectListeners(): void {
       logError(`Botão não encontrado para listener: ${id}`)
       return
     }
+
+    if (btn.dataset.listenerAdded === 'true') {
+      return // Evita duplicar o listener se já foi adicionado
+    }
+
+    btn.dataset.listenerAdded = 'true'
     btn.addEventListener('click', async (e) => {
       e.stopPropagation()
       await execAction(e.currentTarget as HTMLButtonElement, action)
@@ -163,6 +170,10 @@ function checkSessionChange(): void {
 
   if (newChatId && newChatId !== currentChatId) {
     log(`Atendimento trocado: ${currentChatId} → ${newChatId}`)
+    // Limpa cache SGP do atendimento anterior ao trocar
+    if (currentChatId) {
+      chrome.runtime.sendMessage<ClearSgpCacheRequest>({ action: 'clearSgpCache', cacheKey: currentChatId })
+    }
     setCurrentChatId(newChatId)
     setCachedContract(null)
   }
@@ -202,6 +213,9 @@ async function init(): Promise<void> {
 // QUICK REPLY — Carrega e injeta
 // =================================================================
 
+// Flag to prevent multiple concurrent fetch requests triggered by MutationObserver
+let isLoadingQuickReplies = false
+
 async function loadQuickReplies(session: UserSession, attempt = 0): Promise<void> {
   const textarea = document.querySelector(SELECTORS.textarea)
 
@@ -215,9 +229,12 @@ async function loadQuickReplies(session: UserSession, attempt = 0): Promise<void
     return
   }
 
+  if (isLoadingQuickReplies) return
+  isLoadingQuickReplies = true
+
   injectQuickReplyLoading()
   try {
-    const response = await chrome.runtime.sendMessage({
+    const response = await chrome.runtime.sendMessage<GetQuickRepliesRequest>({
       action: 'getQuickReplies',
       username: session.username,
     })
@@ -226,6 +243,29 @@ async function loadQuickReplies(session: UserSession, attempt = 0): Promise<void
   } catch (error) {
     logError('Erro ao carregar quick replies:', error)
     removeQuickReply()
+  } finally {
+    isLoadingQuickReplies = false
+  }
+}
+
+// =================================================================
+// ENCERRAR ATENDIMENTO — Limpa cache SGP ao encerrar
+// =================================================================
+
+function watchEncerrarBtn(): void {
+  const btn = Array.from(document.querySelectorAll<HTMLButtonElement>('button')).find(
+    (b) => b.textContent?.trim() === 'Encerrar atendimento',
+  )
+
+  if (btn && !btn.dataset.atiCacheWatcher) {
+    btn.dataset.atiCacheWatcher = 'true'
+    btn.addEventListener('click', () => {
+      const chatId = currentChatId
+      if (chatId) {
+        chrome.runtime.sendMessage<ClearSgpCacheRequest>({ action: 'clearSgpCache', cacheKey: chatId })
+        log(`Cache SGP limpo ao encerrar atendimento ${chatId}`)
+      }
+    })
   }
 }
 
@@ -241,6 +281,7 @@ const observer = new MutationObserver(() => {
   const hasTextarea = document.querySelector(SELECTORS.textarea)
 
   checkSessionChange()
+  watchEncerrarBtn()
 
   if (sidebar && !hasButtons && !hasBanner) {
     log('Sidebar sem conteúdo, reinjetando...')

@@ -1,4 +1,4 @@
-@import './Quickreply.css';
+@import './quickReply.css';
 :root {
   --chatPrimary: rgb(0, 100, 255);
   --chatHover: rgb(0, 60, 255);

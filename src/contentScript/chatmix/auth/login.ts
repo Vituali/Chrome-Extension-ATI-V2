@@ -4,6 +4,7 @@
 // =================================================================
 
 import { clearSession, saveSession, UserSession } from './session'
+import type { FirebaseLoginRequest } from '../../../background/types'
 
 export type LoginResult =
   | { success: true; session: UserSession }
@@ -13,7 +14,7 @@ export async function loginWithEmail(email: string, password: string): Promise<L
   try {
     console.log('Extensão ATI: Enviando credenciais para o background...')
 
-    const response = await chrome.runtime.sendMessage({
+    const response = await chrome.runtime.sendMessage<FirebaseLoginRequest>({
       action: 'firebaseLogin',
       email,
       password,
@@ -27,7 +28,7 @@ export async function loginWithEmail(email: string, password: string): Promise<L
     await saveSession(response.session)
     console.log(`Extensão ATI: Sessão salva para ${response.session.username}`)
     return { success: true, session: response.session }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Extensão ATI: Erro ao comunicar com background.', error)
     return { success: false, error: 'Erro de conexão com a extensão.' }
   }
