@@ -8,6 +8,7 @@ import { getSgpStatus } from './auth'
 import { findClientInSgp } from './search'
 import { fetchContractOnlineStatus, buildContracts, extractOptions } from './contracts'
 import { hasSgpFormCache, getSgpFormCache, setSgpFormCache } from './cache'
+import { SgpData, SgpContract, SgpUser, SgpOccurrenceType } from '../../contentScript/sgp/types'
 
 export async function focusOrOpenTab(url: string, clientId?: string): Promise<void> {
   if (clientId) {
@@ -68,25 +69,23 @@ export async function handleOpenInSgp(
   }
 }
 
-export async function getSgpFormParams(clientData: ClientData): Promise<any> {
+export async function getSgpFormParams(clientData: ClientData, chatId: string): Promise<SgpData> {
   const { isLoggedIn, baseUrl } = await getSgpStatus()
   if (!isLoggedIn) throw new Error('Não está logado no SGP.')
 
   const clients = await findClientInSgp(baseUrl, clientData)
   if (!clients || clients.length === 0) throw new Error('Cliente não encontrado no SGP.')
 
-  const cacheKey = clientData.cpfCnpj ?? clientData.fullName ?? clientData.phoneNumber ?? 'unknown'
-
-  if (hasSgpFormCache(cacheKey)) {
-    console.log(`Extensão ATI: Usando cache do formulário SGP para ${cacheKey}`)
-    return getSgpFormCache(cacheKey)
+  if (hasSgpFormCache(chatId)) {
+    console.log(`Extensão ATI: Usando cache SGP para atendimento ${chatId}`)
+    return getSgpFormCache(chatId) as SgpData
   }
 
   console.log(`Extensão ATI: Buscando dados do formulário para ${clients.length} cliente(s).`)
 
-  let allContracts: any[] = []
-  let responsibleUsers: any[] = []
-  let occurrenceTypes: any[] = []
+  let allContracts: SgpContract[] = []
+  let responsibleUsers: SgpUser[] = []
+  let occurrenceTypes: SgpOccurrenceType[] = []
 
   for (let i = 0; i < clients.length; i++) {
     const client = clients[i]
@@ -143,11 +142,39 @@ export async function getSgpFormParams(clientData: ClientData): Promise<any> {
     occurrenceTypes,
   }
 
-  setSgpFormCache(cacheKey, result)
+  setSgpFormCache(chatId, result)
   return result
 }
 
-export async function createOccurrenceVisually(data: any): Promise<void> {
+// Nova função exclusiva para atualizar status sem sobrecarregar SGP
+export async function refreshSgpOnlineStatuses(
+  clientData: ClientData,
+  chatId: string,
+): Promise<SgpData | null> {
+  const cached = getSgpFormCache(chatId)
+  if (!cached || !cached.clientSgpId) return null
+
+  const domain = await chrome.storage.local.get('sgp_domain')
+  if (!domain.sgp_domain) return cached
+  const baseUrl = `https://${domain.sgp_domain}/sgp/`
+
+  try {
+    const onlineMap = await fetchContractOnlineStatus(baseUrl, cached.clientSgpId)
+
+    cached.contracts = cached.contracts.map((contract) => ({
+      ...contract,
+      isOnline: onlineMap.get(contract.id) === true
+    }))
+
+    setSgpFormCache(chatId, cached)
+    return cached
+  } catch (error) {
+    console.error('Extensão ATI: Falha ao renovar status online.', error)
+    return cached
+  }
+}
+
+export async function createOccurrenceVisually(data: Record<string, unknown>): Promise<void> {
   const { isLoggedIn, baseUrl } = await getSgpStatus()
   if (!isLoggedIn) throw new Error('Não está logado no SGP.')
 

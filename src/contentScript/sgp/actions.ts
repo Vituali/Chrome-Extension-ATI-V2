@@ -6,6 +6,7 @@
 
 import { ClientData } from './types'
 import { log, logError } from '../chatmix/state'
+import type { OpenInSgpRequest } from '../../background/types'
 
 let isSearchRunning = false
 
@@ -25,14 +26,15 @@ export async function smartOpenSGP(clientData: ClientData): Promise<void> {
 
   try {
     const response = await Promise.race([
-      chrome.runtime.sendMessage({ action: 'openInSgp', clientData, cachedContract }),
+      chrome.runtime.sendMessage<OpenInSgpRequest>({ action: 'openInSgp', clientData, cachedContract }),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error('Timeout: background não respondeu em 5s')), 5000),
       ),
     ])
 
-    if (!(response as any)?.success) {
-      throw new Error((response as any)?.error ?? 'Erro desconhecido no background.')
+    const res = response as { success?: boolean; error?: string }
+    if (!res?.success) {
+      throw new Error(res?.error ?? 'Erro desconhecido no background.')
     }
 
     log('SGP aberto com sucesso.')

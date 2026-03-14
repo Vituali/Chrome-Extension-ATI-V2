@@ -46,17 +46,21 @@
       setValue('#id_data_agendamento', dateStr)
 
       // Contrato
-      if (data.selectedContract) {
-        setValue('#id_clientecontrato', data.selectedContract)
-      } else {
-        const contractSelect = document.querySelector('#id_clientecontrato')
-        if (contractSelect && contractSelect.value === '') {
-          const opts = Array.from(contractSelect.options).filter(function(o) {
-            return o.value && !o.text.includes('CANCELADO')
-          })
-          if (opts.length === 1) setValue('#id_clientecontrato', opts[0].value)
+      function setContract() {
+        if (data.selectedContract) {
+          setValue('#id_clientecontrato', data.selectedContract)
+          return
         }
+
+        const contractSelect = document.querySelector('#id_clientecontrato')
+        if (!contractSelect || contractSelect.value !== '') return
+        
+        const opts = Array.from(contractSelect.options).filter(function(o) {
+          return o.value && !o.text.includes('CANCELADO')
+        })
+        if (opts.length === 1) setValue('#id_clientecontrato', opts[0].value)
       }
+      setContract()
 
       // Descrição e tipo
       if (data.osText) setValue('#id_conteudo', data.osText.toUpperCase())
@@ -76,11 +80,15 @@
     function waitAndFill(attempts) {
       if (document.querySelector('#id_clientecontrato')) {
         fill()
-      } else if (attempts < 30) {
-        setTimeout(function() { waitAndFill(attempts + 1) }, 300)
-      } else {
-        console.error('ATI: Formulário não encontrado após 9s.')
+        return
       }
+      
+      if (attempts >= 30) {
+        console.error('ATI: Formulário não encontrado após 9s.')
+        return
+      }
+      
+      setTimeout(function() { waitAndFill(attempts + 1) }, 300)
     }
 
     waitAndFill(0)

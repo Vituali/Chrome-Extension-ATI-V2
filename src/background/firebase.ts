@@ -15,6 +15,20 @@ const firebaseConfig = {
   appId: '1:467986581951:web:046a778a0c9b6967d5790a',
 }
 
+interface AuthResponseData {
+  localId?: string;
+  idToken?: string;
+  error?: { message: string }
+}
+
+interface FirebaseAtendente {
+  uid: string
+  nomeCompleto: string
+  status: string
+  role: 'usuario' | 'admin'
+  email: string
+}
+
 let firebaseApp: FirebaseApp
 let firebaseDb: Database
 
@@ -35,6 +49,10 @@ export function getFirebaseDb(): Database {
 export async function handleFirebaseLogin(email: string, password: string) {
   try {
     console.log('Extensão ATI: Autenticando via REST API...')
+    
+    // Clear caches on new login attempts
+    cachedTemplates = null
+    cachedQuickReplies = null
 
     const authResponse = await fetch(
       `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${firebaseConfig.apiKey}`,
@@ -73,9 +91,9 @@ export async function handleFirebaseLogin(email: string, password: string) {
     }
 
     let foundUsername: string | null = null
-    let foundData: any = null
+    let foundData: FirebaseAtendente | null = null
 
-    for (const [username, data] of Object.entries(atendentes) as any) {
+    for (const [username, data] of Object.entries(atendentes) as [string, FirebaseAtendente][]) {
       if (data.uid === uid) {
         foundUsername = username
         foundData = data
@@ -102,7 +120,7 @@ export async function handleFirebaseLogin(email: string, password: string) {
 
     console.log(`Extensão ATI: Login realizado — ${foundUsername} (${foundData.role})`)
     return { success: true, session }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Extensão ATI: Erro no login Firebase.', error)
     return { success: false, error: 'Erro de conexão. Verifique sua internet.' }
   }
@@ -112,13 +130,25 @@ export async function handleFirebaseLogin(email: string, password: string) {
 // TEMPLATES DE O.S
 // =================================================================
 
-export async function getOsTemplates(username: string, idToken: string): Promise<any[]> {
+import { OsTemplate } from '../contentScript/sgp/types'
+
+// Cache em memória do Service Worker
+let cachedTemplates: OsTemplate[] | null = null
+let cachedQuickReplies: OsTemplate[] | null = null
+
+export async function getOsTemplates(username: string, idToken: string): Promise<OsTemplate[]> {
+  if (cachedTemplates) {
+    console.log(`Extensão ATI: Retornando ${cachedTemplates.length} templates do cache em memória.`)
+    return cachedTemplates
+  }
   try {
     const res = await fetch(
       `${firebaseConfig.databaseURL}modelos_os/${username}.json?auth=${idToken}`,
     )
     const data = await res.json()
-    const templates = data ? Object.values(data) : []
+    const templates = data ? (Object.values(data) as OsTemplate[]) : []
+    
+    cachedTemplates = templates
     console.log(`Extensão ATI: ${templates.length} templates carregados para ${username}`)
     return templates
   } catch (error) {
@@ -131,7 +161,12 @@ export async function getOsTemplates(username: string, idToken: string): Promise
 // QUICK REPLIES
 // =================================================================
 
-export async function getQuickReplies(username: string): Promise<any[]> {
+export async function getQuickReplies(username: string): Promise<OsTemplate[]> {
+  if (cachedQuickReplies) {
+    console.log(`Extensão ATI: Retornando ${cachedQuickReplies.length} quick replies do cache em memória.`)
+    return cachedQuickReplies
+  }
+
   try {
     const [userRes, masterRes] = await Promise.all([
       fetch(`${firebaseConfig.databaseURL}respostas/${username}.json`),
@@ -149,9 +184,10 @@ export async function getQuickReplies(username: string): Promise<any[]> {
       : []
 
     const all = [...masterReplies, ...userReplies].filter(
-      (r: any) => r?.category === 'quick_reply' && r?.text && r?.title,
+      (r: OsTemplate) => r?.category === 'quick_reply' && r?.text && r?.title,
     )
 
+    cachedQuickReplies = all
     console.log(`Extensão ATI: ${all.length} quick replies carregados para ${username}`)
     return all
   } catch (error) {
