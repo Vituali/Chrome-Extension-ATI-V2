@@ -13,7 +13,7 @@ import { collectTextFromMessages } from './helpers'
 import { buildAIPrompt } from './buildAIPrompt'
 import { injectLoginBanner } from './auth/loginModal'
 import { injectQuickReply, injectQuickReplyLoading, removeQuickReply } from './quickReply'
-import type { GetOsTemplatesRequest, OpenInSgpRequest, GetQuickRepliesRequest, ClearSgpCacheRequest } from '../../background/types'
+import type { GetOsTemplatesRequest, OpenInSgpRequest, GetQuickRepliesRequest, ClearSgpCacheRequest, GetGlobalOccurrenceTypesRequest } from '../../background/types'
 // Sessão atual em memória
 let currentSession: UserSession | null = null
 
@@ -106,17 +106,25 @@ const actions: Record<string, () => Promise<void>> = {
     const session = await getSession()
     if (!session) throw new Error('Usuário não logado.')
 
-    // Busca templates do Firebase (modelos_os do atendente)
-    const response = await Promise.race([
-      chrome.runtime.sendMessage<GetOsTemplatesRequest>({
-        action: 'getOsTemplates',
-        username: session.username,
-        idToken: session.idToken,
-      }),
+    // Busca templates do Firebase e Tipos de Ocorrência em paralelo
+    const [templatesRes, occurrenceTypesRes] = await Promise.race([
+      Promise.all([
+        chrome.runtime.sendMessage<GetOsTemplatesRequest>({
+          action: 'getOsTemplates',
+          username: session.username,
+          idToken: session.idToken,
+        }),
+        chrome.runtime.sendMessage<GetGlobalOccurrenceTypesRequest>({
+          action: 'getGlobalOccurrenceTypes',
+          idToken: session.idToken,
+        })
+      ])
     ])
-    const templates = response?.templates ?? []
+    
+    const templates = templatesRes?.templates ?? []
+    const occurrenceTypes = occurrenceTypesRes?.types ?? []
 
-    await showOSModal(templates, () => collectTextFromMessages(), data)
+    await showOSModal(templates, occurrenceTypes, () => collectTextFromMessages(), data)
   },
 
   'ati-refresh': async () => {

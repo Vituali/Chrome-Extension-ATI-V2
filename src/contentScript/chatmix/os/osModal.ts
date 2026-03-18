@@ -3,14 +3,16 @@
 // =================================================================
 
 import './osModal.css'
-import { ClientData, SgpData } from '../../sgp/types'
+import { ClientData, SgpData, SgpOccurrenceType } from '../../sgp/types'
 import { formatPhoneNumber } from '../helpers'
 import { saveDraft, clearDraft, loadDraft } from './osDraft'
 import { currentChatId } from '../state'
 import { processDynamicPlaceholders, buildTemplatesHTML, OsTemplate } from './osModalTypes'
 import { createModal, buildOsModalBodyHTML } from './osModalUI'
 import { loadSgpData } from './osModalSgp'
+import { populateOccurrenceTypes } from './osModalSgp'
 import { setupDraftSaving, setupOsCheckbox, setupTemplateButtons } from './osModalHandlers'
+import { getSession } from '../auth/session'
 import type {
   ClearSgpCacheRequest,
   CreateOccurrenceVisuallyRequest,
@@ -20,6 +22,7 @@ export { processDynamicPlaceholders }
 
 export async function showOSModal(
   allTemplates: OsTemplate[],
+  occurrenceTypes: SgpOccurrenceType[],
   extractChatFn: () => string[],
   clientData: ClientData,
 ): Promise<void> {
@@ -28,6 +31,8 @@ export async function showOSModal(
   const osBaseText = `${formattedPhone} ${firstName ?? ''} | `
   const cacheKey = cpfCnpj ?? fullName ?? phoneNumber
   const chatId = currentChatId ?? cacheKey ?? 'unknown'
+  const session = await getSession()
+  const idToken = session?.idToken ?? ''
 
   try {
     const existingDraft = chatId ? loadDraft(chatId) : null
@@ -62,12 +67,20 @@ export async function showOSModal(
     // Setup de handlers
     setupDraftSaving(chatId, osTextArea, modalElement, () => sgpData)
     setupOsCheckbox(osCheckbox, statusCheckbox, statusLabel)
-    setupTemplateButtons(modalElement, osTextArea, osBaseText, () => sgpData)
+    setupTemplateButtons(modalElement, osTextArea, osBaseText, occurrenceTypes)
+
+    // Preenche tipos de ocorrência instantaneamente (carregados junto com os templates)
+    populateOccurrenceTypes(
+      modalElement.querySelector('#modal-occurrence-types-container'),
+      occurrenceTypes,
+      modalController.signal,
+    )
 
     // Carrega dados SGP (cache ou busca)
     loadSgpData({
       clientData,
       chatId,
+      idToken,
       modalElement,
       sgpButton,
       signal: modalController.signal,

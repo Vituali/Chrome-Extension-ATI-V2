@@ -106,8 +106,12 @@ Abaixo está o mapeamento dos nós do banco de dados e os tipos de dados armazen
   },
 
   // Cache gerenciado pelo script de background (Tipos de Ocorrência do SGP)
+  // Alimenta também o criador de modelos de O.S no site.
   "sgp_cache": {
-    // Definido dinamicamente pela extensão
+    "updatedAt": "YYYY-MM-DD", // Data da última sincronização com o SGP (formato ISO, ex: "2026-03-18")
+    "occurrenceTypes": [
+      { "id": "string", "text": "string" } // Ex: { "id": "1", "text": "Suporte - Sem Acesso" }
+    ]
   }
 }
 ```

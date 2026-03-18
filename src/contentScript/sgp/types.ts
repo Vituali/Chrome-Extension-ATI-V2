@@ -25,6 +25,7 @@ export interface SgpContract {
   text: string
   clientId: string
   online?: boolean | null
+  cancelled?: boolean
 }
 
 export interface SgpUser {
@@ -41,7 +42,6 @@ export interface SgpData {
   clientSgpId: string
   contracts: SgpContract[]
   responsibleUsers: SgpUser[]
-  occurrenceTypes: SgpOccurrenceType[]
 }
 
 export interface SgpStatusCache {

@@ -26,16 +26,40 @@ export function populateContracts(container: Element | null, contracts: SgpContr
     return
   }
 
+  const getStatus = (text: string) => {
+    const lower = text.toLowerCase()
+    if (lower.includes('cancelado')) return 'cancelado'
+    if (lower.includes('suspenso')) return 'suspenso'
+    if (lower.includes('inativo')) return 'inativo'
+    if (lower.includes('reduzida') || lower.includes('vel. red') || lower.includes('v. red'))
+      return 'vel-red'
+    if (lower.includes('ativo')) return 'ativo'
+    return 'inativo'
+  }
+
+  const summary = { ativos: 0, velRed: 0, suspensos: 0, cancelados: 0, inativos: 0 }
+
   const html = valid
     .map((contract, index) => {
+      const status = getStatus(contract.text)
+      if (status === 'ativo') summary.ativos++
+      else if (status === 'vel-red') summary.velRed++
+      else if (status === 'suspenso') summary.suspensos++
+      else if (status === 'cancelado') summary.cancelados++
+      else if (status === 'inativo') summary.inativos++
+
       const badge =
         contract.online === true
           ? `<span class="contract-status contract-status--online">● Online</span>`
           : contract.online === false
             ? `<span class="contract-status contract-status--offline">● Offline</span>`
             : ''
+
+      const finalStatus = contract.cancelled ? 'cancelado' : status;
+      const statusClass = `contract-item--${finalStatus}`;
+
       return `
-      <label class="template-btn contract-item">
+      <label class="template-btn contract-item ${statusClass}">
         <input type="radio" name="selected_contract" value="${contract.id}" ${index === 0 ? 'checked' : ''}>
         <span>${contract.text}</span>
         ${badge}
@@ -44,8 +68,15 @@ export function populateContracts(container: Element | null, contracts: SgpContr
     })
     .join('')
 
+  const summaryHTML = valid.length > 1 
+    ? `<div class="modal-status-summary" style="font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 8px; padding: 4px 8px; background: rgba(255,255,255,0.03); border-radius: 4px; text-align: center;">
+        Ativos: ${summary.ativos} | Vel. Red.: ${summary.velRed} | Inativos: ${summary.inativos} | Suspensos: ${summary.suspensos} | Cancelados: ${summary.cancelados}
+       </div>`
+    : ''
+
   container.innerHTML = `
     <h4 class="modal-category-title">Selecione o Contrato</h4>
+    ${summaryHTML}
     <div class="modal-btn-group">${html}</div>
   `
 }
@@ -141,6 +172,7 @@ export function populateOccurrenceTypes(
 export interface LoadSgpDataParams {
   clientData: ClientData
   chatId: string
+  idToken: string
   modalElement: HTMLElement
   sgpButton: HTMLButtonElement
   signal: AbortSignal
@@ -151,6 +183,7 @@ export interface LoadSgpDataParams {
 export function loadSgpData({
   clientData,
   chatId,
+  idToken,
   modalElement,
   sgpButton,
   signal,
@@ -166,11 +199,6 @@ export function loadSgpData({
     populateContracts(
       modalElement.querySelector('#modal-sgp-contracts-container'),
       sgpData.contracts,
-    )
-    populateOccurrenceTypes(
-      modalElement.querySelector('#modal-occurrence-types-container'),
-      sgpData.occurrenceTypes,
-      signal,
     )
     sgpButton.disabled = false
 
@@ -217,7 +245,7 @@ export function loadSgpData({
   } else {
     // --- Busca completa no SGP ---
     chrome.runtime
-      .sendMessage<GetSgpFormParamsRequest>({ action: 'getSgpFormParams', clientData, chatId })
+      .sendMessage<GetSgpFormParamsRequest>({ action: 'getSgpFormParams', clientData, chatId, idToken })
       .then((response: { success?: boolean; data?: unknown; message?: string }) => {
         if (response?.success) {
           const sgpData = response.data as SgpData
@@ -225,11 +253,6 @@ export function loadSgpData({
           populateContracts(
             modalElement.querySelector('#modal-sgp-contracts-container'),
             sgpData.contracts,
-          )
-          populateOccurrenceTypes(
-            modalElement.querySelector('#modal-occurrence-types-container'),
-            sgpData.occurrenceTypes,
-            signal,
           )
           sgpButton.disabled = false
         } else {
