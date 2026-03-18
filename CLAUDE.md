@@ -104,3 +104,26 @@ A extensão dependende fortemente do HTML da página do ChatMix. Qualquer atuali
 1. **Seletores CSS (`src/contentScript/chatmix/state.ts`)**: É ali que está o mapa do tesouro (ex: `#actionsContainerV2`, `.flex-none.p-4`). Se os botões ou o campo de texto (textarea) sumirem, o problema está nos seletores. Aja sempre atualizando-os.
 2. **Mutation Observers (`index.ts`)**: A extensão usa um `MutationObserver` para varrer alterações na tela e reinjetar os botões (O.S e Copy) toda vez que a URL ou o painel do chat muda.
 3. **Extração de Dados (`getClientData.ts` e `tryVisualIdentification.ts`)**: A extensão raspa o CPF/CNPJ ou Nome do cliente lendo o texto lateral ou o histórico do chat usando **Regex**. Novamente, uma mudança no layout ou formatação do texto no ChatMix vai requerer ajuste nas Regex nesses arquivos.
+
+### 🛑 REGRAS ESTRITAS DE NOMENCLATURA E FIREBASE (CRÍTICO PARA IAs)
+
+O não cumprimento destas regras quebrará o banco de dados e a comunicação com o SGP.
+
+1. **PROIBIDO INVENTAR VARIÁVEIS:** Ao manipular dados lidos ou escritos no Firebase, **NUNCA** crie chaves genéricas, apelidos ou traduções (ex: NUNCA use `sgpData`, `dadosSgp`, `tiposOcorrencia`).
+2. **FIDELIDADE ABSOLUTA AO SCHEMA:** Você deve usar **EXATAMENTE** os nomes de chaves e nós definidos no arquivo `FIREBASE_SCHEMA.md`. Respeite maiúsculas, minúsculas e a grafia exata em inglês.
+3. **CHAVE CRÍTICA - TIPOS DE OCORRÊNCIA:** A chave para a lista de ocorrências cacheadas do SGP no Firebase é **ESTRITAMENTE** `occurrenceTypes`.
+   - ❌ ERRADO: `ocurrencytipes`, `occurrence_types`, `sgpData`, `tipos`.
+   - ✅ CORRETO: `occurrenceTypes`.
+4. **CHAVE CRÍTICA - ID DA OCORRÊNCIA:** Nos templates de O.S. (`modelos_os` e `os_templates_master`), a chave que guarda o ID numérico do SGP é **ESTRITAMENTE** `occurrenceTypeId`.
+
+### 🎨 Padrões de UI / Estilização CSS (Design System)
+
+Para manter a consistência visual da extensão dentro do ChatMix, siga ESTRITAMENTE estas regras ao gerar CSS ou classes no TypeScript:
+
+1. **Nomenclatura BEM:** Ao criar modificadores de estado para elementos visuais (ex: botões, cards, badges), utilize o padrão `--[estado]`. Exemplo: `.contract-item--ativo`, `.ati-client-modal-btn--vel-red`.
+2. **Cores de Status (Contratos e Clientes):** NUNCA use `border-left` simples ou cores sólidas no fundo. O padrão visual exige o uso de transparências (`rgba`) baseadas no HEX original da cor:
+   - `background`: rgba(R, G, B, 0.1)
+   - `border-color` (ou `border`): rgba(R, G, B, 0.3)
+   - `color`: HEX Sólido (#RRGGBB)
+   - `:hover`: background com alpha 0.15 e border com alpha 0.5.
+3. **Status Mapeados:** Os únicos sufixos de status permitidos na lógica TypeScript e no CSS são: `ativo` (verde), `vel-red` (amarelo), `suspenso` (laranja), `inativo` (cinza) e `cancelado` (vermelho).

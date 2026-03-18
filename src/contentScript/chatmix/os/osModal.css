@@ -123,15 +123,59 @@
   color: white;
 }
 
-.template-btn.contract-item--cancelled {
-  background: rgba(248, 113, 113, 0.1);
-  border-color: rgba(248, 113, 113, 0.3);
-  color: #f87171;
+/* Padrão de Cores dos Status dos Contratos */
+.template-btn.contract-item--ativo {
+  background: rgba(74, 222, 128, 0.1); 
+  border-color: rgba(74, 222, 128, 0.3); 
+  color: #4ade80;
+}
+.template-btn.contract-item--ativo:hover {
+  background: rgba(74, 222, 128, 0.15); 
+  border-color: rgba(74, 222, 128, 0.5); 
+  color: #86efac; 
 }
 
-.template-btn.contract-item--cancelled:hover {
-  background: rgba(248, 113, 113, 0.15);
-  border-color: rgba(248, 113, 113, 0.5);
+.template-btn.contract-item--vel-red {
+  background: rgba(250, 204, 21, 0.1); 
+  border-color: rgba(250, 204, 21, 0.3); 
+  color: #facc15;
+}
+.template-btn.contract-item--vel-red:hover {
+  background: rgba(250, 204, 21, 0.15); 
+  border-color: rgba(250, 204, 21, 0.5); 
+  color: #fde047; 
+}
+
+.template-btn.contract-item--suspenso {
+  background: rgba(251, 146, 60, 0.1); 
+  border-color: rgba(251, 146, 60, 0.3); 
+  color: #fb923c;
+}
+.template-btn.contract-item--suspenso:hover {
+  background: rgba(251, 146, 60, 0.15); 
+  border-color: rgba(251, 146, 60, 0.5); 
+  color: #fdba74; 
+}
+
+.template-btn.contract-item--inativo {
+  background: rgba(156, 163, 175, 0.1); 
+  border-color: rgba(156, 163, 175, 0.3); 
+  color: #9ca3af;
+}
+.template-btn.contract-item--inativo:hover {
+  background: rgba(156, 163, 175, 0.15); 
+  border-color: rgba(156, 163, 175, 0.5); 
+  color: #d1d5db; 
+}
+
+.template-btn.contract-item--cancelado {
+  background: rgba(248, 113, 113, 0.1); 
+  border-color: rgba(248, 113, 113, 0.3); 
+  color: #f87171;
+}
+.template-btn.contract-item--cancelado:hover {
+  background: rgba(248, 113, 113, 0.15); 
+  border-color: rgba(248, 113, 113, 0.5); 
   color: #fca5a5;
 }
 

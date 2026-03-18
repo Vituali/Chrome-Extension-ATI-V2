@@ -32,9 +32,36 @@ export async function showClientSelectionModal(
       'Este cliente possui múltiplos cadastros no SGP. Selecione qual você deseja abrir:'
     body.appendChild(helpText)
 
+    // Summary calculation
+    const summary = {
+      ativos: 0,
+      velRed: 0,
+      suspensos: 0,
+      cancelados: 0,
+      inativos: 0,
+    }
+
+    const getStatus = (text: string) => {
+      const lower = text.toLowerCase()
+      if (lower.includes('cancelado')) return 'cancelado'
+      if (lower.includes('suspenso')) return 'suspenso'
+      if (lower.includes('inativo')) return 'inativo'
+      if (lower.includes('reduzida') || lower.includes('vel. red') || lower.includes('v. red'))
+        return 'vel-red'
+      if (lower.includes('ativo')) return 'ativo'
+      return 'inativo'
+    }
+
     clients.forEach((client) => {
+      const status = getStatus(client.text)
+      if (status === 'ativo') summary.ativos++
+      else if (status === 'vel-red') summary.velRed++
+      else if (status === 'suspenso') summary.suspensos++
+      else if (status === 'cancelado') summary.cancelados++
+      else if (status === 'inativo') summary.inativos++
+
       const btn = document.createElement('button')
-      btn.className = 'ati-client-modal-btn'
+      btn.className = `ati-client-modal-btn ati-client-modal-btn--${status}`
       btn.textContent = `ID ${client.id} - ${client.text}`
 
       btn.onclick = () => {
@@ -43,6 +70,19 @@ export async function showClientSelectionModal(
       }
       body.appendChild(btn)
     })
+
+    // Adiciona o contador de resumo
+    const summaryEl = document.createElement('div')
+    summaryEl.className = 'ati-client-modal-summary'
+    summaryEl.style.fontSize = '11px'
+    summaryEl.style.color = 'rgba(255,255,255,0.5)'
+    summaryEl.style.marginTop = '10px'
+    summaryEl.style.padding = '8px'
+    summaryEl.style.background = 'rgba(255,255,255,0.03)'
+    summaryEl.style.borderRadius = '6px'
+    summaryEl.style.textAlign = 'center'
+    summaryEl.innerHTML = `Ativos: ${summary.ativos} | Ativos Vel. Red.: ${summary.velRed} | Inativos: ${summary.inativos} | Suspensos: ${summary.suspensos} | Cancelados: ${summary.cancelados}`
+    body.appendChild(summaryEl)
 
     const footer = document.createElement('div')
     footer.className = 'ati-client-modal-footer'

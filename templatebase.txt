@@ -1,0 +1,14 @@
+[AÇÃO PRINCIPAL]: {Descreva o que você quer em 1 ou 2 frases. Ex: Criar a função que busca o histórico do cliente no SGP}.
+
+Contexto: {Onde isso vai rodar? Ex: Isso deve ser feito no arquivo background/sgp/history.ts}.
+
+Regras Estritas (LEIA ANTES DE CODAR):
+
+Leia o CLAUDE.md e o FIREBASE_SCHEMA.md. Siga TODAS as regras arquiteturais, de nomenclatura e padrões de UI definidos neles.
+
+NÃO invente variáveis, chaves de Firebase ou classes CSS que não estejam documentadas.
+
+Use TypeScript tipado (evite any).
+
+Saída Esperada:
+Forneça APENAS o código necessário para a alteração ou os passos exatos de refatoração. Sem explicações longas, sem reescrever o arquivo inteiro se não for necessário (mostre apenas o bloco que muda). Se precisar criar uma regra nova, me dê o texto para adicionar ao CLAUDE.md.
