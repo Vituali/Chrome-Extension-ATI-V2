@@ -175,7 +175,7 @@ export async function getOccurrenceTypes(baseUrl: string, idToken: string): Prom
     const sgpHtml = await sgpRes.text()
     const freshTypes = extractOptions(
       sgpHtml,
-      /<select[^>]+id=['"](id_tipo)['"][^>]*>([\.\s\S]*?)<\/select>/,
+      /<select[^>]+id=['"]id_tipo['"][^>]*>([\.\s\S]*?)<\/select>/,
     )
 
     if (freshTypes.length > 0) {
