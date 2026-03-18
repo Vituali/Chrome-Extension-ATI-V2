@@ -200,11 +200,15 @@ respostas/{username}/[]          → { category, subCategory, text, title }
 
 ### v2.0.5-beta
 
-- ✅ Sistema visual de cores para status dos contratos (Ativo, Vel. Red., Suspenso, etc.)
-- ✅ Refatoração de classes CSS e UI usando design system com transparências (RGBA)
-- ✅ Correção de bugs na renderização de botões no modal de seleção de clientes
-- ✅ Adição de contador e resumo de status na interface principal
-- ✅ Documentação do projeto (`CLAUDE.md`) atualizada com regras estritas de nomenclatura para IAs
+- ✅ Status Colors for contracts (Active, Reduced Speed, Suspended, etc.)
+- ✅ Design System standardized with rgba transparencies and :hover states
+- ✅ Status Summary and counter in the client selection modal
+- ✅ osModal refactored into sub-modules (UI, SGP, Handlers, Types)
+- ✅ Zero any in firebase.ts and cache.ts with strict TypeScript interfaces
+- ✅ Online status refresh without reloading the entire SGP form
+- ✅ ExtensionRequest standardized for all Background/Content messaging
+- ✅ botPatterns isolated for clean chat history stripping
+- ✅ CLAUDE.md context-shielded with strict naming rules for AIs
 
 ### v2.0.4
 
