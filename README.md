@@ -192,6 +192,13 @@ respostas/{username}/[]          → { category, subCategory, text, title }
 
 ## 📋 Changelog
 
+### v2.0.5-beta
+- ✅ Visual color system for contract statuses (Active, Reduced Speed, Suspended, etc.)
+- ✅ Refactoring of CSS and UI classes using a design system with transparency (RGBA)
+- ✅ Bug fixes in button rendering within the client selection modal
+- ✅ Addition of counter and status summary in the main interface
+- ✅ Project documentation (CLAUDE.md) updated with strict naming rules for AIs
+
 ### v2.0.4
 - ✅ **Online/Offline** status for contracts in the O.S modal
 - ✅ Background refactored into modules (`firebase`, `sgp/auth`, `sgp/contracts`, etc.)

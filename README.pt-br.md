@@ -198,6 +198,14 @@ respostas/{username}/[]          → { category, subCategory, text, title }
 
 ## 📋 Changelog
 
+### v2.0.5-beta
+
+- ✅ Sistema visual de cores para status dos contratos (Ativo, Vel. Red., Suspenso, etc.)
+- ✅ Refatoração de classes CSS e UI usando design system com transparências (RGBA)
+- ✅ Correção de bugs na renderização de botões no modal de seleção de clientes
+- ✅ Adição de contador e resumo de status na interface principal
+- ✅ Documentação do projeto (`CLAUDE.md`) atualizada com regras estritas de nomenclatura para IAs
+
 ### v2.0.4
 
 - ✅ Status **Online/Offline** dos contratos no modal de O.S
