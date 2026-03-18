@@ -130,11 +130,87 @@ export async function handleFirebaseLogin(email: string, password: string) {
 // TEMPLATES DE O.S
 // =================================================================
 
-import { OsTemplate } from '../contentScript/sgp/types'
+import { OsTemplate, SgpOccurrenceType } from '../contentScript/sgp/types'
+import { extractOptions } from './sgp/contracts'
 
 // Cache em memória do Service Worker
 let cachedTemplates: OsTemplate[] | null = null
 let cachedQuickReplies: OsTemplate[] | null = null
+let cachedOccurrenceTypes: SgpOccurrenceType[] | null = null
+
+// =================================================================
+// TIPOS DE OCORRÊNCIA — Cache em memória + Firebase (1x/dia) + SGP fallback
+// =================================================================
+
+export async function getOccurrenceTypes(baseUrl: string, idToken: string): Promise<SgpOccurrenceType[]> {
+  // Camada 1: cache em memória (Service Worker ativo)
+  if (cachedOccurrenceTypes) {
+    console.log(`Extensão ATI: Tipos de ocorrência em memória (${cachedOccurrenceTypes.length} tipos).`)
+    return cachedOccurrenceTypes
+  }
+
+  const today = new Date().toISOString().slice(0, 10) // "YYYY-MM-DD"
+
+  try {
+    // Camada 2: Firebase (agora seguro com auth != null)
+    const fbRes = await fetch(
+      `${firebaseConfig.databaseURL}sgp_cache.json?auth=${idToken}`,
+      { signal: AbortSignal.timeout(5000) }
+    )
+    const fbData = await fbRes.json() as { updatedAt?: string; occurrenceTypes?: SgpOccurrenceType[] } | null
+
+    if (fbData?.updatedAt === today && Array.isArray(fbData.occurrenceTypes) && fbData.occurrenceTypes.length > 0) {
+      // Cache do Firebase válido para hoje — usa direto
+      console.log(`Extensão ATI: Tipos de ocorrência do Firebase (${fbData.occurrenceTypes.length} tipos, cache de hoje).`)
+      cachedOccurrenceTypes = fbData.occurrenceTypes
+      return cachedOccurrenceTypes
+    }
+
+    // Camada 3: Cache expirado/ausente — busca do SGP e atualiza Firebase
+    console.log('Extensão ATI: Cache de tipos expirado. Sincronizando com o SGP...')
+    const sgpRes = await fetch(
+      `${baseUrl}/admin/atendimento/cliente/1/ocorrencia/add/`,
+      { credentials: 'include', signal: AbortSignal.timeout(10000) },
+    )
+    const sgpHtml = await sgpRes.text()
+    const freshTypes = extractOptions(
+      sgpHtml,
+      /<select[^>]+id=['"](id_tipo)['"][^>]*>([\.\s\S]*?)<\/select>/,
+    )
+
+    if (freshTypes.length > 0) {
+      // Atualiza Firebase (agora autorizado usando o idToken do usuário logado)
+      fetch(
+        `${firebaseConfig.databaseURL}sgp_cache.json?auth=${idToken}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ updatedAt: today, occurrenceTypes: freshTypes }),
+          signal: AbortSignal.timeout(5000),
+        },
+      ).then(() => {
+        console.log(`Extensão ATI: Firebase sgp_cache atualizado com ${freshTypes.length} tipos.`)
+      }).catch((writeErr) => {
+        console.warn('Extensão ATI: Falha ao atualizar sgp_cache no Firebase.', writeErr)
+      })
+
+      cachedOccurrenceTypes = freshTypes
+      return cachedOccurrenceTypes
+    }
+
+    // SGP também falhou — retorna o que havia no Firebase mesmo expirado
+    if (Array.isArray(fbData?.occurrenceTypes) && fbData!.occurrenceTypes!.length > 0) {
+      console.warn('Extensão ATI: SGP falhou. Usando tipos desatualizados do Firebase.')
+      cachedOccurrenceTypes = fbData!.occurrenceTypes!
+      return cachedOccurrenceTypes
+    }
+
+    return []
+  } catch (error) {
+    console.error('Extensão ATI: Erro ao buscar tipos de ocorrência.', error)
+    return cachedOccurrenceTypes ?? []
+  }
+}
 
 export async function getOsTemplates(username: string, idToken: string): Promise<OsTemplate[]> {
   if (cachedTemplates) {

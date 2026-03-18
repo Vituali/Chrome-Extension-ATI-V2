@@ -42,7 +42,6 @@ export interface SgpData {
   clientSgpId: string
   contracts: SgpContract[]
   responsibleUsers: SgpUser[]
-  occurrenceTypes: SgpOccurrenceType[]
 }
 
 export interface SgpStatusCache {

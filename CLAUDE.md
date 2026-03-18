@@ -67,6 +67,13 @@ Para evitar que a ATI seja bloqueada pelo SGP devido a múltiplas buscas automá
   2. O atendente clica no botão "Encerrar atendimento" no ChatMix.
   3. A URL do chat muda drasticamente (mudança de sessão).
 
+**Tipos de Ocorrência (Cache separado):**
+- Os tipos de ocorrência são globais do sistema SGP (~70 tipos) e são armazenados no Firebase (`sgp_cache/occurrenceTypes`).
+- A extensão usa cache em memória do Service Worker como camada primária (sem request enquanto o browser estiver aberto).
+- Na primeira abertura após reiniciar o browser, busca do Firebase e verifica o `updatedAt`.
+- Se o `updatedAt` for de outro dia, sincroniza com o SGP e atualiza o Firebase (apenas 1 atendente por dia "paga" esse custo).
+- O Firebase `sgp_cache` também alimenta o criador de modelos de O.S no site da ATI.
+
 ### 3. Comunicação Content Script ↔ Background
 
 - O `contentScript` **nunca** faz requisições diretas ao SGP ou Firebase (evita CORS e garante segurança de contexto).

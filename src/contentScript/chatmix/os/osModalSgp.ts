@@ -142,6 +142,7 @@ export function populateOccurrenceTypes(
 export interface LoadSgpDataParams {
   clientData: ClientData
   chatId: string
+  idToken: string
   modalElement: HTMLElement
   sgpButton: HTMLButtonElement
   signal: AbortSignal
@@ -152,6 +153,7 @@ export interface LoadSgpDataParams {
 export function loadSgpData({
   clientData,
   chatId,
+  idToken,
   modalElement,
   sgpButton,
   signal,
@@ -167,11 +169,6 @@ export function loadSgpData({
     populateContracts(
       modalElement.querySelector('#modal-sgp-contracts-container'),
       sgpData.contracts,
-    )
-    populateOccurrenceTypes(
-      modalElement.querySelector('#modal-occurrence-types-container'),
-      sgpData.occurrenceTypes,
-      signal,
     )
     sgpButton.disabled = false
 
@@ -218,7 +215,7 @@ export function loadSgpData({
   } else {
     // --- Busca completa no SGP ---
     chrome.runtime
-      .sendMessage<GetSgpFormParamsRequest>({ action: 'getSgpFormParams', clientData, chatId })
+      .sendMessage<GetSgpFormParamsRequest>({ action: 'getSgpFormParams', clientData, chatId, idToken })
       .then((response: { success?: boolean; data?: unknown; message?: string }) => {
         if (response?.success) {
           const sgpData = response.data as SgpData
@@ -226,11 +223,6 @@ export function loadSgpData({
           populateContracts(
             modalElement.querySelector('#modal-sgp-contracts-container'),
             sgpData.contracts,
-          )
-          populateOccurrenceTypes(
-            modalElement.querySelector('#modal-occurrence-types-container'),
-            sgpData.occurrenceTypes,
-            signal,
           )
           sgpButton.disabled = false
         } else {
