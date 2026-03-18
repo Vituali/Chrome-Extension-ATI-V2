@@ -7,6 +7,7 @@ import { ClientData } from './constants'
 import { getSgpStatus } from './auth'
 import { findClientInSgp } from './search'
 import { fetchContractOnlineStatus, buildContracts, extractOptions } from './contracts'
+import { getOccurrenceTypes } from '../firebase'
 import { hasSgpFormCache, getSgpFormCache, setSgpFormCache } from './cache'
 import { SgpData, SgpContract, SgpUser, SgpOccurrenceType } from '../../contentScript/sgp/types'
 
@@ -30,12 +31,13 @@ export async function focusOrOpenTab(url: string, clientId?: string): Promise<vo
 export async function handleOpenInSgp(
   clientData: ClientData,
   cachedContract: string | null,
-): Promise<void> {
+  forceClientId?: string,
+): Promise<any> {
   if (cachedContract) {
     console.log(`Extensão ATI: Usando contrato cacheado — ${cachedContract}`)
     const url = `${SGP_DNS}/admin/clientecontrato/${cachedContract}/change/`
     await focusOrOpenTab(url, cachedContract)
-    return
+    return { success: true }
   }
 
   const { isLoggedIn, baseUrl } = await getSgpStatus()
@@ -43,7 +45,13 @@ export async function handleOpenInSgp(
   if (!isLoggedIn) {
     console.warn('Extensão ATI: Não logado no SGP, abrindo login...')
     await focusOrOpenTab(`${baseUrl}/accounts/login/`)
-    return
+    return { success: true }
+  }
+
+  if (forceClientId) {
+    console.log(`Extensão ATI: ID do cliente forçado — ID ${forceClientId}`)
+    await focusOrOpenTab(`${baseUrl}/admin/cliente/${forceClientId}/contratos/`, forceClientId)
+    return { success: true }
   }
 
   const hasData =
@@ -54,22 +62,61 @@ export async function handleOpenInSgp(
   if (!hasData) {
     console.warn('Extensão ATI: Sem dados do cliente, abrindo admin como fallback.')
     await focusOrOpenTab(`${baseUrl}/admin/`)
-    return
+    return { success: true }
   }
 
   const clients = await findClientInSgp(baseUrl, clientData)
 
   if (clients && clients.length > 0) {
-    const client = clients[0]
-    console.log(`Extensão ATI: Cliente encontrado — ID ${client.id}`)
-    await focusOrOpenTab(`${baseUrl}/admin/cliente/${client.id}/contratos/`, client.id)
+    if (clients.length === 1) {
+      const client = clients[0]
+      console.log(`Extensão ATI: Cliente encontrado — ID ${client.id}`)
+      await focusOrOpenTab(`${baseUrl}/admin/cliente/${client.id}/contratos/`, client.id)
+      return { success: true }
+    } else {
+      console.log(`Extensão ATI: Múltiplos clientes encontrados — ${clients.length} opções`)
+      
+      const enrichedClients = await Promise.all(
+        clients.map(async (client) => {
+          try {
+            const url = `${baseUrl}/admin/atendimento/cliente/${client.id}/ocorrencia/add/`
+            const response = await fetch(url, {
+              credentials: 'include',
+              signal: AbortSignal.timeout(8000),
+            })
+            if (!response.ok) throw new Error('Network response was not ok')
+            const html = await response.text()
+
+            const onlineStatusMap = await fetchContractOnlineStatus(baseUrl, client.id)
+            const contracts = await buildContracts(
+              baseUrl,
+              client,
+              html,
+              false,
+              onlineStatusMap,
+            )
+
+            const clientText =
+              contracts.length > 0 ? contracts.map((c) => c.text).join(' | ') : 'Sem contratos ativos'
+
+            return { id: client.id, text: clientText }
+          } catch (e) {
+            console.warn(`Extensão ATI: Erro ao buscar contratos para cliente ${client.id}.`, e)
+            return { id: client.id, text: 'Erro ao buscar contratos ou sem contratos' }
+          }
+        }),
+      )
+
+      return { success: true, multipleClients: true, clients: enrichedClients }
+    }
   } else {
     console.warn('Extensão ATI: Cliente não encontrado, abrindo admin geral.')
     await focusOrOpenTab(`${baseUrl}/admin/`)
+    return { success: true }
   }
 }
 
-export async function getSgpFormParams(clientData: ClientData, chatId: string): Promise<SgpData> {
+export async function getSgpFormParams(clientData: ClientData, chatId: string, idToken: string): Promise<SgpData> {
   const { isLoggedIn, baseUrl } = await getSgpStatus()
   if (!isLoggedIn) throw new Error('Não está logado no SGP.')
 
@@ -83,9 +130,11 @@ export async function getSgpFormParams(clientData: ClientData, chatId: string): 
 
   console.log(`Extensão ATI: Buscando dados do formulário para ${clients.length} cliente(s).`)
 
+  // Tipos de ocorrência vêm do Firebase (cache em memória + TTL diário)
+  const occurrenceTypes: SgpOccurrenceType[] = await getOccurrenceTypes(baseUrl, idToken)
+
   let allContracts: SgpContract[] = []
   let responsibleUsers: SgpUser[] = []
-  let occurrenceTypes: SgpOccurrenceType[] = []
 
   for (let i = 0; i < clients.length; i++) {
     const client = clients[i]
@@ -121,11 +170,6 @@ export async function getSgpFormParams(clientData: ClientData, chatId: string): 
           html,
           /<select[^>]+id=['"]id_responsavel['"][^>]*>([\s\S]*?)<\/select>/,
         ).map((u) => ({ id: u.id, username: u.text.toLowerCase() }))
-
-        occurrenceTypes = extractOptions(
-          html,
-          /<select[^>]+id=['"]id_tipo['"][^>]*>([\s\S]*?)<\/select>/,
-        )
       }
     } catch (error) {
       console.error(`Extensão ATI: Falha ao buscar dados para cliente ${client.id}.`, error)

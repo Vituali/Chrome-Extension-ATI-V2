@@ -7,6 +7,7 @@
 import { ClientData } from './types'
 import { log, logError } from '../chatmix/state'
 import type { OpenInSgpRequest } from '../../background/types'
+import { showClientSelectionModal } from './clientModal'
 
 let isSearchRunning = false
 
@@ -32,9 +33,24 @@ export async function smartOpenSGP(clientData: ClientData): Promise<void> {
       ),
     ])
 
-    const res = response as { success?: boolean; error?: string }
+    const res = response as { success?: boolean; error?: string; multipleClients?: boolean; clients?: {id: string; text: string}[] }
     if (!res?.success) {
       throw new Error(res?.error ?? 'Erro desconhecido no background.')
+    }
+
+    if (res.multipleClients && res.clients) {
+      log('Múltiplos cadastros encontrados, exibindo modal no Chatmix.')
+      const selectedId = await showClientSelectionModal(res.clients)
+      if (selectedId) {
+        log(`Cadastro escolhido: ${selectedId}`)
+        await chrome.runtime.sendMessage<OpenInSgpRequest>({
+          action: 'openInSgp',
+          clientData,
+          cachedContract,
+          forceClientId: selectedId,
+        })
+      }
+      return
     }
 
     log('SGP aberto com sucesso.')

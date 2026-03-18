@@ -2,7 +2,7 @@
 // MODAL DE O.S — Handlers de eventos internos
 // =================================================================
 
-import { SgpData } from '../../sgp/types'
+import { SgpData, SgpOccurrenceType } from '../../sgp/types'
 import { saveDraft } from './osDraft'
 import { processDynamicPlaceholders } from './osModalTypes'
 
@@ -66,7 +66,7 @@ export function setupTemplateButtons(
   modalElement: HTMLElement,
   osTextArea: HTMLTextAreaElement,
   osBaseText: string,
-  getSgpData: () => SgpData | null,
+  occurrenceTypes: SgpOccurrenceType[],
 ): void {
   modalElement.querySelectorAll<HTMLButtonElement>('.template-btn').forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -78,10 +78,9 @@ export function setupTemplateButtons(
       const typeId = btn.getAttribute('data-occurrence-type-id')
       const searchInput = modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSearchInput')
       const hiddenInput = modalElement.querySelector<HTMLInputElement>('#occurrenceTypeSelectedValue')
-      const sgpData = getSgpData()
 
-      if (typeId && sgpData?.occurrenceTypes && searchInput && hiddenInput) {
-        const found = sgpData.occurrenceTypes.find((t) => t.id === typeId)
+      if (typeId && occurrenceTypes && searchInput && hiddenInput) {
+        const found = occurrenceTypes.find((t) => t.id === typeId)
         if (found) {
           searchInput.value = found.text
           hiddenInput.value = found.id

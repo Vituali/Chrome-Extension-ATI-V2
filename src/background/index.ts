@@ -2,8 +2,9 @@
 // BACKGROUND SERVICE WORKER — ENTRY POINT
 // =================================================================
 
-import { handleFirebaseLogin, getOsTemplates, getQuickReplies } from './firebase'
+import { handleFirebaseLogin, getOsTemplates, getQuickReplies, getOccurrenceTypes } from './firebase'
 import { handleOpenInSgp, getSgpFormParams, createOccurrenceVisually, refreshSgpOnlineStatuses } from './sgp/occurrence'
+import { getSgpStatus } from './sgp/auth'
 import { deleteSgpFormCache } from './sgp/cache'
 import type { ExtensionRequest } from './types'
 
@@ -18,14 +19,14 @@ chrome.runtime.onMessage.addListener((request: ExtensionRequest, _sender, sendRe
   }
 
   if (request.action === 'openInSgp') {
-    handleOpenInSgp(request.clientData, request.cachedContract)
-      .then(() => sendResponse({ success: true }))
+    handleOpenInSgp(request.clientData, request.cachedContract, request.forceClientId)
+      .then((res) => sendResponse(res))
       .catch((error) => sendResponse({ success: false, error: error.message }))
     return true
   }
 
   if (request.action === 'getSgpFormParams') {
-    getSgpFormParams(request.clientData, request.chatId)
+    getSgpFormParams(request.clientData, request.chatId, request.idToken)
       .then((data) => sendResponse({ success: true, data }))
       .catch((error) => sendResponse({ success: false, message: error.message }))
     return true
@@ -62,6 +63,14 @@ chrome.runtime.onMessage.addListener((request: ExtensionRequest, _sender, sendRe
     refreshSgpOnlineStatuses(request.clientData, request.chatId)
       .then((data) => sendResponse({ success: true, data }))
       .catch((error) => sendResponse({ success: false, error: error.message }))
+    return true
+  }
+
+  if (request.action === 'getGlobalOccurrenceTypes') {
+    getSgpStatus()
+      .then(({ baseUrl }) => getOccurrenceTypes(baseUrl, request.idToken))
+      .then((types) => sendResponse({ success: true, types }))
+      .catch((error) => sendResponse({ success: false, types: [], error: error.message }))
     return true
   }
 })

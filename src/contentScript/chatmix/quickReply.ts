@@ -1,5 +1,5 @@
 ﻿// =================================================================
-// QUICK REPLY ÔÇö Respostas r├ípidas injetadas acima do textarea
+// QUICK REPLY — Respostas rápidas injetadas acima do textarea
 // =================================================================
 
 import { processDynamicPlaceholders } from './os/osModal'
@@ -13,7 +13,7 @@ interface QuickReply {
   subCategory?: string
 }
 
-// Cache em mem├│ria ÔÇö busca Firebase uma vez por sess├úo
+// Cache em memória — busca Firebase uma vez por sessão
 // Limpo apenas no logout (clearQuickReplyCache)
 let cachedReplies: QuickReply[] | null = null
 
@@ -92,13 +92,13 @@ export function injectQuickReply(replies: QuickReply[]): void {
   const showReplies = (cat: string) => {
     container.innerHTML = ''
 
-    // Cabe├ºalho com bot├úo voltar + nome da categoria
+    // Cabeçalho com botão voltar + nome da categoria
     const header = document.createElement('div')
     header.className = 'ati-qr-tabs'
 
     const backBtn = document.createElement('button')
     backBtn.className = 'ati-qr-tab ati-qr-tab--active'
-    backBtn.innerHTML = 'ÔåÉ ' + cat
+    backBtn.innerHTML = '← ' + cat
     backBtn.addEventListener('click', showCategories)
     header.appendChild(backBtn)
 
@@ -114,12 +114,12 @@ export function injectQuickReply(replies: QuickReply[]): void {
   insertContainer()
 
   log(
-    `Quick reply injetado ÔÇö ${quickReplies.length} respostas em ${categories.length} categoria(s).`,
+    `Quick reply injetado — ${quickReplies.length} respostas em ${categories.length} categoria(s).`,
   )
 }
 
 // =================================================================
-// RENDERIZA BOT├òES DA ABA ATIVA
+// RENDERIZA BOTÕES DA ABA ATIVA
 // =================================================================
 
 function renderButtons(
@@ -158,7 +158,7 @@ export function injectQuickReplyLoading(): void {
 
   const container = document.createElement('div')
   container.id = 'ati-quick-reply-container'
-  container.innerHTML = `<div class="ati-qr-loading">Carregando respostas r├ípidas...</div>`
+  container.innerHTML = `<div class="ati-qr-loading">Carregando respostas rápidas...</div>`
 
   const inputArea = textarea.closest('.flex-none.p-4') ?? textarea.parentElement
   if (inputArea?.parentElement) {

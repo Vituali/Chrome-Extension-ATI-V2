@@ -7,7 +7,7 @@ import { ClientData } from '../sgp/types'
 // --- Debug Mode ---
 // true  = logs completos no console
 // false = apenas logs essenciais
-export const DEBUG_MODE = false
+export const DEBUG_MODE = true
 
 export function log(...args: unknown[]): void {
   if (DEBUG_MODE) {

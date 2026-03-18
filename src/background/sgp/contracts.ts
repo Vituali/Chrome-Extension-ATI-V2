@@ -84,6 +84,7 @@ export async function buildContracts(
     clientId: client.id,
     text: multipleClients ? `[Cadastro ${client.id}] ${c.text}` : c.text,
     online: onlineStatusMap.has(c.id) ? onlineStatusMap.get(c.id) : null,
+    cancelled: c.text.toLowerCase().includes('cancelado'),
   }))
 
   // Busca endereço de cada contrato

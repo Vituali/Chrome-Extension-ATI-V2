@@ -48,15 +48,8 @@ export async function getSgpStatus(): Promise<{ isLoggedIn: boolean; baseUrl: st
   if (cache?.isLoggedIn) {
     const isExpired = Date.now() - cache.timestamp > LOGIN_CACHE_TTL_MS
     if (!isExpired) {
-      try {
-        const verified = await performLoginCheck(cache.baseUrl)
-        if (verified.isLoggedIn) {
-          console.log('Extensão ATI: Sessão SGP ainda ativa (cache).')
-          return verified
-        }
-      } catch {
-        console.warn('Extensão ATI: Sessão SGP do cache inválida, renovando...')
-      }
+      console.log('Extensão ATI: Sessão SGP ainda ativa (cache).')
+      return { isLoggedIn: cache.isLoggedIn, baseUrl: cache.baseUrl }
     } else {
       console.log('Extensão ATI: Cache SGP expirado, renovando...')
     }
