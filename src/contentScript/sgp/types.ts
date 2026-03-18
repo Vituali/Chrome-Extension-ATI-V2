@@ -25,6 +25,7 @@ export interface SgpContract {
   text: string
   clientId: string
   online?: boolean | null
+  cancelled?: boolean
 }
 
 export interface SgpUser {

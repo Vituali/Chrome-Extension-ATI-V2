@@ -123,6 +123,18 @@
   color: white;
 }
 
+.template-btn.contract-item--cancelled {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+  color: #f87171;
+}
+
+.template-btn.contract-item--cancelled:hover {
+  background: rgba(248, 113, 113, 0.15);
+  border-color: rgba(248, 113, 113, 0.5);
+  color: #fca5a5;
+}
+
 .contract-status {
   font-size: 11px;
   font-weight: 500;

@@ -34,8 +34,9 @@ export function populateContracts(container: Element | null, contracts: SgpContr
           : contract.online === false
             ? `<span class="contract-status contract-status--offline">● Offline</span>`
             : ''
+      const cancelledClass = contract.cancelled ? 'contract-item--cancelled' : ''
       return `
-      <label class="template-btn contract-item">
+      <label class="template-btn contract-item ${cancelledClass}">
         <input type="radio" name="selected_contract" value="${contract.id}" ${index === 0 ? 'checked' : ''}>
         <span>${contract.text}</span>
         ${badge}
