@@ -53,7 +53,6 @@ html.dark:not(.ati-theme-legacy) .chat_sidebar header .dark\:bg-neutral-600,
 
 html.dark:not(.ati-theme-legacy) .dark\:bg-neutral-500 {
   background: rgba(45, 45, 55, 0.5) !important;
-  backdrop-filter: blur(4px) !important;
 }
 
 html.dark:not(.ati-theme-legacy) .chat_sidebar input.dark\:border-gray-600,
@@ -580,6 +579,15 @@ html.dark:not(.ati-theme-legacy) .p-button:focus {
   outline: none !important;
 }
 
+/* Evita que menus dropdown (Headless UI) quebrem o clique ao mover os itens */
+html.dark:not(.ati-theme-legacy) [role='menuitem'],
+html.dark:not(.ati-theme-legacy) [role='menuitem']:hover,
+html.dark:not(.ati-theme-legacy) [id^='headlessui-menu-item'],
+html.dark:not(.ati-theme-legacy) [id^='headlessui-menu-item']:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* ---- Inputs ---- */
 
 html.dark:not(.ati-theme-legacy) input[type='text'],
@@ -626,17 +634,19 @@ html.dark:not(.ati-theme-legacy) h6 {
   letter-spacing: 0.5px !important;
 }
 
-html.dark:not(.ati-theme-legacy) a {
+html.dark:not(.ati-theme-legacy) a:not([role='menuitem']) {
   color: var(--accentBlue) !important;
   text-decoration: none !important;
   transition: all 0.2s ease !important;
 }
 
-html.dark:not(.ati-theme-legacy) a:hover {
+html.dark:not(.ati-theme-legacy) a:not([role='menuitem']):hover {
   color: rgb(147, 197, 253) !important;
   text-shadow: 0 0 8px rgba(59, 130, 246, 0.3) !important;
 }
-
+html.dark .text_dark {
+  color: var(--accentBlue) !important;
+}
 /* ---- Animações ---- */
 
 @keyframes fadeIn {

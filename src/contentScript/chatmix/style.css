@@ -21,6 +21,34 @@
   box-sizing: border-box;
 }
 
+/* =================================================================== */
+/* == MODAL DE HISTÓRICO CHATMIX (Apenas Maior e sem quebrar)       == */
+/* =================================================================== */
+
+/* O Modal de Histórico Nativo */
+.sm\:align-middle.sm\:max-w-lg.lg\:max-w-3xl {
+  max-width: 95vw !important;
+  width: auto !important; /* Estica pra acompanhar o filho */
+  min-width: 800px !important; /* Já abre lindo */
+}
+
+/* A CAIXA PAI TRAVADA EM 550PX - Colocamos o resize:both nela!! */
+.sm\:align-middle.sm\:max-w-lg.lg\:max-w-3xl .h-\[550px\] {
+  height: 90vh !important; /* Altura padrão */
+  min-height: 300px !important;
+  max-height: 90vh !important;
+  max-width: 40vw !important;
+  resize: both !important; /* Estica pra todos os lados */
+  overflow: hidden !important; /* Pra alça de redimensionamento funcionar precisa disso */
+}
+
+/* A Janela de Chat (Basta obedecer o tamanho do pai!) */
+.sm\:align-middle.sm\:max-w-lg.lg\:max-w-3xl .overflow-y-scroll {
+  flex: 1 !important; /* Pega tudo que tiver de altura livre */
+  height: 100% !important;
+  min-width: 100% !important;
+}
+
 /* --- Estilo base de todos os botões --- */
 .action-btn {
   padding: 14px 0;
