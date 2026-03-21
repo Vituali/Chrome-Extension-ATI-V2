@@ -520,3 +520,151 @@ label.template-btn.contract-item {
   color: rgba(255, 255, 255, 0.45);
   font-family: 'Space Mono', monospace;
 }
+
+.modal-status-summary {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* =================================================================== */
+/* == MODO CLARO (Quando html não tem a classe .dark)               == */
+/* =================================================================== */
+
+html:not(.dark) .ati-os-modal-overlay {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+html:not(.dark) .ati-os-modal {
+  background: #ffffff;
+  color: #333333;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
+}
+
+html:not(.dark) .ati-os-modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  color: #111111;
+}
+
+html:not(.dark) .ati-os-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html:not(.dark) .ati-os-modal-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .modal-category-title {
+  color: rgb(0, 100, 255);
+  border-bottom: 1px solid rgba(0, 100, 255, 0.2);
+}
+
+html:not(.dark) .template-btn {
+  background: rgba(0, 0, 0, 0.03);
+  color: #333333;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .template-btn:hover {
+  background: rgba(0, 100, 255, 0.1);
+  border-color: rgba(0, 100, 255, 0.3);
+  color: #111111;
+}
+
+/* Colors adjustments for contract statuses in light mode */
+html:not(.dark) .template-btn.contract-item--ativo { color: #16a34a; }
+html:not(.dark) .template-btn.contract-item--vel-red { color: #ca8a04; }
+html:not(.dark) .template-btn.contract-item--suspenso { color: #ea580c; }
+html:not(.dark) .template-btn.contract-item--inativo { color: #4b5563; }
+html:not(.dark) .template-btn.contract-item--cancelado { color: #dc2626; }
+
+html:not(.dark) .contract-status--online { color: #16a34a; }
+html:not(.dark) .contract-status--offline { color: #dc2626; }
+
+html:not(.dark) .modal-textarea {
+  background: rgba(0, 0, 0, 0.02) !important;
+  color: #333333 !important;
+  border: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+html:not(.dark) .modal-textarea:focus {
+  border-color: rgba(0, 100, 255, 0.6) !important;
+  box-shadow: 0 0 0 3px rgba(0, 100, 255, 0.15) !important;
+}
+
+html:not(.dark) .modal-textarea-label {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+html:not(.dark) .modal-checkbox-label {
+  border: 0.5px solid rgba(0, 0, 0, 0.08);
+  background: rgba(0, 0, 0, 0.02);
+}
+
+html:not(.dark) .modal-checkbox-label:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+html:not(.dark) .modal-checkbox-label .toggle-track {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html:not(.dark) .ati-os-modal-body input[type='checkbox'] {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html:not(.dark) .ati-os-modal-body input[type='checkbox']::before {
+  background: #ffffff;
+}
+
+html:not(.dark) .modal-loader {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+html:not(.dark) .modal-loader::before {
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: rgb(0, 100, 255);
+}
+
+html:not(.dark) .searchable-options-list {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+html:not(.dark) .searchable-options-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+html:not(.dark) .searchable-option {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+html:not(.dark) .searchable-option:hover {
+  background: rgba(0, 100, 255, 0.1);
+  color: #111111;
+}
+
+html:not(.dark) .main-btn--cancel {
+  background: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .main-btn--cancel:hover {
+  background: rgba(0, 0, 0, 0.08);
+  color: rgba(0, 0, 0, 0.8);
+}
+
+html:not(.dark) .modal-templates-container > strong {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+html:not(.dark) .modal-status-summary {
+  color: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.03);
+}

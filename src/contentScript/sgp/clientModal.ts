@@ -74,13 +74,6 @@ export async function showClientSelectionModal(
     // Adiciona o contador de resumo
     const summaryEl = document.createElement('div')
     summaryEl.className = 'ati-client-modal-summary'
-    summaryEl.style.fontSize = '11px'
-    summaryEl.style.color = 'rgba(255,255,255,0.5)'
-    summaryEl.style.marginTop = '10px'
-    summaryEl.style.padding = '8px'
-    summaryEl.style.background = 'rgba(255,255,255,0.03)'
-    summaryEl.style.borderRadius = '6px'
-    summaryEl.style.textAlign = 'center'
     summaryEl.innerHTML = `Ativos: ${summary.ativos} | Ativos Vel. Red.: ${summary.velRed} | Inativos: ${summary.inativos} | Suspensos: ${summary.suspensos} | Cancelados: ${summary.cancelados}`
     body.appendChild(summaryEl)
 

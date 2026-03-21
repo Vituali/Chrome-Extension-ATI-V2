@@ -69,7 +69,7 @@ export function populateContracts(container: Element | null, contracts: SgpContr
     .join('')
 
   const summaryHTML = valid.length > 1 
-    ? `<div class="modal-status-summary" style="font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 8px; padding: 4px 8px; background: rgba(255,255,255,0.03); border-radius: 4px; text-align: center;">
+    ? `<div class="modal-status-summary">
         Ativos: ${summary.ativos} | Vel. Red.: ${summary.velRed} | Inativos: ${summary.inativos} | Suspensos: ${summary.suspensos} | Cancelados: ${summary.cancelados}
        </div>`
     : ''
