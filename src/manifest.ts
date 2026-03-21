@@ -27,7 +27,7 @@ export default defineManifest({
       js: ['src/contentScript/chatmix/index.ts'],
     },
     {
-      matches: ['https://sgp.atiinternet.com.br/*'],
+      matches: ['https://sgp.atiinternet.com.br/*', 'http://201.158.20.35:8000/*'],
       js: ['src/contentScript/sgp/fillForm.ts'],
     },
   ],
@@ -40,7 +40,7 @@ export default defineManifest({
         'img/logo-128.png',
         'src/contentScript/sgp/sgpFill.js',
       ],
-      matches: ['https://sgp.atiinternet.com.br/*'],
+      matches: ['https://sgp.atiinternet.com.br/*', 'http://201.158.20.35:8000/*'],
     },
   ],
   permissions: ['sidePanel', 'storage', 'tabs', 'alarms'],

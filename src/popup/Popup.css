@@ -168,6 +168,48 @@ body {
   border: 1px solid rgba(0, 100, 255, 0.2);
 }
 
+/* --- Tema --- */
+.popup-theme-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 4px 4px;
+}
+
+.popup-theme-selector label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.popup-theme-selector select {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 8px 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+.popup-theme-selector select:focus {
+  border-color: rgb(0, 100, 255);
+}
+
+.popup-theme-selector select option {
+  background: #222;
+  color: white;
+}
+
+.popup-theme-selector small {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.2;
+}
+
 /* --- Divider --- */
 .popup-divider {
   height: 1px;

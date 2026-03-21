@@ -13,10 +13,14 @@ export const Popup = () => {
   const [session, setSession] = useState<UserSession | null>(null)
   const [loading, setLoading] = useState(true)
   const [loggingOut, setLoggingOut] = useState(false)
+  const [themeVersion, setThemeVersion] = useState<'modern' | 'legacy'>('modern')
 
   useEffect(() => {
-    chrome.storage.local.get('ati_user_session', (result) => {
+    chrome.storage.local.get(['ati_user_session', 'ati_theme_version'], (result) => {
       setSession(result.ati_user_session ?? null)
+      if (result.ati_theme_version) {
+        setThemeVersion(result.ati_theme_version)
+      }
       setLoading(false)
     })
   }, [])
@@ -26,6 +30,12 @@ export const Popup = () => {
     await chrome.storage.local.remove('ati_user_session')
     setSession(null)
     setLoggingOut(false)
+  }
+
+  const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newTheme = e.target.value as 'modern' | 'legacy'
+    setThemeVersion(newTheme)
+    chrome.storage.local.set({ ati_theme_version: newTheme })
   }
 
   const handleOpenSite = () => {
@@ -77,6 +87,15 @@ export const Popup = () => {
         <div className={`popup-role popup-role--${session.role}`}>
           {session.role === 'admin' ? '⭐ Admin' : '👤 Usuário'}
         </div>
+      </div>
+
+      <div className="popup-theme-selector">
+        <label htmlFor="theme-select">Estilo do Tema Escuro:</label>
+        <select id="theme-select" value={themeVersion} onChange={handleThemeChange}>
+          <option value="modern">Moderno (Azul, Neon e Bordas)</option>
+          <option value="legacy">Clássico (Cinza e Simples)</option>
+        </select>
+        <small>*Só surte efeito se o próprio Chatmix estiver usando a "aparência escura" padrão.</small>
       </div>
 
       <div className="popup-divider" />
