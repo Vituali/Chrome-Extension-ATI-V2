@@ -188,6 +188,32 @@ function checkSessionChange(): void {
 }
 
 // =================================================================
+// CONTROLE DE TEMA (MODERNO VS CLÁSSICO)
+// =================================================================
+
+function initTheme(): void {
+  chrome.storage.local.get(['ati_theme_version'], (result) => {
+    if (result.ati_theme_version === 'legacy') {
+      document.documentElement.classList.add('ati-theme-legacy')
+    } else {
+      document.documentElement.classList.remove('ati-theme-legacy')
+    }
+  })
+
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'local' && changes.ati_theme_version) {
+      if (changes.ati_theme_version.newValue === 'legacy') {
+        document.documentElement.classList.add('ati-theme-legacy')
+      } else {
+        document.documentElement.classList.remove('ati-theme-legacy')
+      }
+    }
+  })
+}
+
+initTheme()
+
+// =================================================================
 // INIT COM VERIFICAÇÃO DE LOGIN
 // =================================================================
 
